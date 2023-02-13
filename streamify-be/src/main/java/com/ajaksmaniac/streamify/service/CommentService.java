@@ -1,5 +1,6 @@
 package com.ajaksmaniac.streamify.service;
 
+import com.ajaksmaniac.streamify.dto.CommentDto;
 import com.ajaksmaniac.streamify.entity.CommentEntity;
 import com.ajaksmaniac.streamify.entity.VideoEntity;
 
@@ -7,10 +8,10 @@ import java.util.List;
 
 public interface CommentService {
 
-    CommentEntity getComment(Long id);
+    CommentDto getComment(Long id);
 
-    void saveComment(CommentEntity comment);
-    List<CommentEntity> getCommentsForVideo(Long videoId);
+    void saveComment(CommentDto comment);
+    List<CommentDto> getCommentsForVideo(Long videoId);
     void deleteById(Long id);
 
 
