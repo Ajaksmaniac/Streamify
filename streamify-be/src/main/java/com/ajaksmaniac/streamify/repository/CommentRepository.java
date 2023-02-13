@@ -12,9 +12,9 @@ import java.util.List;
 
 @Repository
 public interface CommentRepository extends JpaRepository<CommentEntity, Long> {
-    @Query("SELECT * FROM comment where id = :id")
+    @Query(value = "SELECT * FROM comment c where c.id = :id", nativeQuery = true)
     CommentEntity findByCommentId(@Param("id")Long id);
-    @Query("SELECT * FROM comment where video_id = :id")
+    @Query(value = "SELECT * FROM comment c where c.video_id = :id", nativeQuery = true)
     List<CommentEntity> findByMovieId(@Param("id") Long id);
 
     boolean existsById(Long name);

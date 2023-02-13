@@ -1,5 +1,6 @@
 package com.ajaksmaniac.streamify.service.implementation;
 
+import com.ajaksmaniac.streamify.dto.CommentDto;
 import com.ajaksmaniac.streamify.entity.CommentEntity;
 import com.ajaksmaniac.streamify.entity.UserEntity;
 import com.ajaksmaniac.streamify.entity.VideoEntity;
@@ -17,60 +18,67 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
 public class CommentServiceImplementation implements CommentService {
 
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
 
     @Autowired
-    CommentRepository commentRepository;
+    private CommentRepository commentRepository;
 
     @Autowired
-    VideoRepository videoRepository;
+    private VideoRepository videoRepository;
 
     @Override
-    public CommentEntity getComment(Long id) {
+    public CommentDto getComment(Long id) {
         if(!commentRepository.existsById(id)){
             throw new CommentNotFoundException();
         }
+        CommentEntity en = commentRepository.findByCommentId(id);
 
-        return commentRepository.findByCommentId(id);
+        return new CommentDto(en.getId(), en.getContent(), en.getVideo().getId(),en.getUser().getId());
     }
 
     @Override
-    public void saveComment(CommentEntity comment) {
-        if(videoRepository.existsById((comment.getVideo().getId()))){
+    public void saveComment(CommentDto comment) {
+        if(!videoRepository.existsById((comment.getVideoId()))){
             throw new VideoNotFoundException();
         }
 
-        if(userRepository.existsById((comment.getUser().getId()))){
+        if(!userRepository.existsById((comment.getUserId()))){
             throw new UserNotExistantException();
         }
 
-        UserEntity user = userRepository.findByUsername(comment.getUser().getUsername());
-        VideoEntity video = videoRepository.findByName(comment.getVideo().getName());
+        UserEntity user = userRepository.findByUserId(comment.getUserId());
+        VideoEntity video = videoRepository.findByVideoId(comment.getVideoId());
 
-        comment.setUser(user);
-        comment.setVideo(video);
-
-        commentRepository.save(comment);
+        CommentEntity entity = new CommentEntity();
+        entity.setContent(comment.getContent());
+        entity.setUser(user);
+        entity.setVideo(video);
+        commentRepository.save(entity);
     }
 
     @Override
-    public List<CommentEntity> getCommentsForVideo(Long videoId) {
-        if(videoRepository.existsById(videoId)){
+    public List<CommentDto> getCommentsForVideo(Long videoId) {
+        if(!videoRepository.existsById(videoId)){
             throw new VideoNotFoundException();
         }
-        return commentRepository.findByMovieId(videoId);
+
+        List<CommentDto> list = commentRepository.findByMovieId(videoId).stream().map(o->{
+            return new CommentDto(o.getId(),o.getContent(),o.getVideo().getId(),o.getUser().getId());
+        }).collect(Collectors.toList());
+        return list;
     }
 
 
     @Override
     public void deleteById(Long id) {
-        if(commentRepository.existsById(id)){
+        if(!commentRepository.existsById(id)){
             throw new CommentNotFoundException();
         }
         commentRepository.deleteById(id);
