@@ -17,6 +17,12 @@ public interface VideoRepository extends JpaRepository<VideoEntity,Long> {
     boolean existsByName(String name);
     @Query(nativeQuery = true,value = "SELECT * FROM video v where v.id = :id")
     VideoEntity findByVideoId(@Param("id") Long id);
+
+//    @Query(nativeQuery = true,value = "SELECT id, name, user_id FROM video v where v.id = :id")
+//    VideoEntity getVideoDetailsById(@Param("id") Long id);
     @Query(nativeQuery = true,value = "SELECT name FROM video")
     List<String> getAllEntryNames();
+
+    @Query(nativeQuery = true,value = "SELECT * FROM video")
+    List<VideoEntity> getAllVideos();
 }
