@@ -22,18 +22,20 @@ public class VideoEntity {
 
     private String name;
 
-    @Lob
-    private byte[] data;
+//    @Lob
+//    private byte[] data;
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
 
     private UserEntity user;
 
-    public VideoEntity(String name, byte[] data, UserEntity user) {
+    public VideoEntity(String name, UserEntity user) {
         this.name = name;
-        this.data = data;
+//        this.data = data;
         this.user = user;
     }
+
+
 
 
 
