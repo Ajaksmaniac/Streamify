@@ -12,6 +12,8 @@ export type HomePageProps = {
 }
 
 export type Video = {
-    title: string,
-    author: string,
+    id: number,
+    name: string,
+    postedBy: string,
+    url:String
 }
