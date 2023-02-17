@@ -1,6 +1,5 @@
-import { HomePageProps } from "../constants/types";
 import  VideoBox  from "../components/VideoBox";
-import { Col, Container, Row } from "react-bootstrap";
+import { Container, Row } from "react-bootstrap";
 import { useEffect, useState } from "react";
 import axios from "axios";
 
@@ -9,7 +8,6 @@ export function HomePage () {
   
   useEffect(()=>{
     axios.get("http://localhost:8080/video/details").then(res =>{
-      // console.log(res);
       setVideos(res.data);
     })
   },[])
