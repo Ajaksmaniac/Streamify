@@ -16,8 +16,4 @@ public class CommentDto {
     private String content;
     private Long videoId;
     private Long userId;
-
-
-
-
 }

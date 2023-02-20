@@ -11,13 +11,11 @@ import com.ajaksmaniac.streamify.repository.CommentRepository;
 import com.ajaksmaniac.streamify.repository.UserRepository;
 import com.ajaksmaniac.streamify.repository.VideoRepository;
 import com.ajaksmaniac.streamify.service.CommentService;
-import com.ajaksmaniac.streamify.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
