@@ -14,10 +14,12 @@ import lombok.AllArgsConstructor;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -76,7 +78,9 @@ public class VideoServiceImplementation implements VideoService {
             throw new UserNotExistantException();
         }
 
-        UserEntity user = userRepository.findByUsername(username);
+//        UserEntity user = userRepository.findByUsername(username);
+        UserEntity user = userRepository.findByUsername(username).orElseThrow(() ->
+                new UsernameNotFoundException(MessageFormat.format("username {0} not found", username)));
 
         VideoEntity newVideoEntity = new VideoEntity(name, user);
         VideoEntity saved = videoRepository.save(newVideoEntity);

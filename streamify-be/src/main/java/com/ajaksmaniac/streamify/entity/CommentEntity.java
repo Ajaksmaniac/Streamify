@@ -2,9 +2,9 @@ package com.ajaksmaniac.streamify.entity;
 
 
 import jakarta.persistence.*;
+
 import lombok.*;
 
-//@NoArgsConstructor
 @RequiredArgsConstructor
 @Data
 @Table(name = "comment")

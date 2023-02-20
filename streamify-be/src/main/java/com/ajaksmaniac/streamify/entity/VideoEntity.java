@@ -1,12 +1,7 @@
 package com.ajaksmaniac.streamify.entity;
 
-import jakarta.annotation.Nonnull;
 import jakarta.persistence.*;
 import lombok.*;
-
-import java.beans.ConstructorProperties;
-
-//@Data
 
 @Table(name = "video")
 @Data

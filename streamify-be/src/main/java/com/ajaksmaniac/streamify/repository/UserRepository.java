@@ -11,7 +11,7 @@ import java.util.Optional;
 
 @Repository
 public interface UserRepository extends JpaRepository<UserEntity, Long> {
-    UserEntity findByUsername(String username);
+    Optional<UserEntity> findByUsername(String username);
     boolean existsByUsername(String username);
     @Query(nativeQuery = true,value = "SELECT * FROM user u WHERE u.user_id = :id")
     UserEntity findByUserId(@Param("id") Long id);
