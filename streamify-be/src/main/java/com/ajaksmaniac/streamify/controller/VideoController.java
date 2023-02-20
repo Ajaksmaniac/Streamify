@@ -35,10 +35,6 @@ public class VideoController {
         return ResponseEntity.ok("Video saved successfully.");
     }
 
-
-
-
-
     @GetMapping("/id/{id}")
     public ResponseEntity<?> getVideoById(@PathVariable("id") Long id){
 

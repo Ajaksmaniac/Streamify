@@ -50,4 +50,6 @@ public class UserManager implements UserDetailsManager {
         return userRepository.findByUsername(username).orElseThrow(() ->
                 new UsernameNotFoundException(MessageFormat.format("username {0} not found", username)));
     }
+
+
 }
