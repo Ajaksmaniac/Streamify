@@ -17,3 +17,9 @@ export type Video = {
     postedBy: string,
     url:String
 }
+
+export type User = {
+    userId: number,
+    authToken: string,
+    refreshToken:string
+}

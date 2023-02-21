@@ -1,9 +1,11 @@
 import { Navbar, Nav, Form, FormControl, Button, Row, FormGroup, Col } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import {NavbarProps } from './../constants/types';
 import Image from 'react-bootstrap/Image'
 
 export default function NavigationBar(props:NavbarProps){
+    const navigate = useNavigate();
+
     return(
         <Navbar bg="dark" variant="dark" >
         {/* <Link to={""} className="navbar-brand">
@@ -27,7 +29,7 @@ export default function NavigationBar(props:NavbarProps){
             <Nav className="ml-auto">
                 <Row>
                     <Form.Group as={Col}  >
-                            <Button variant="primary" type="submit" >Login</Button>            
+                            <Button variant="primary" type="submit" onClick={() => navigate("/login" )}>Login</Button>            
                         
                             <Button variant="info" type="submit" >Sign Up</Button>            
                     </Form.Group>
