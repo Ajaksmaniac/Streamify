@@ -13,7 +13,7 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<UserEntity, Long> {
     Optional<UserEntity> findByUsername(String username);
     boolean existsByUsername(String username);
-    @Query(nativeQuery = true,value = "SELECT * FROM user u WHERE u.user_id = :id")
+    @Query(value = "SELECT u FROM UserEntity u JOIN FETCH u.role WHERE u.id = :id")
     UserEntity findByUserId(@Param("id") Long id);
 
     @Query(nativeQuery = true,value = "SELECT username FROM user")
