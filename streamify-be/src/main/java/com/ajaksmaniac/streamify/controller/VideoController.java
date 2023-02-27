@@ -11,6 +11,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.core.io.Resource;
@@ -28,9 +29,9 @@ public class VideoController {
     private VideoService videoService;
 
     @PostMapping()
-    public ResponseEntity<String> saveVideo(@RequestParam("file") MultipartFile file, @RequestParam("name") String name, @RequestParam("username") String username) throws IOException {
+    public ResponseEntity<String> saveVideo(@RequestParam("file") MultipartFile file, @RequestParam("name") String name, @RequestParam("channelName") String channelName) throws IOException {
 
-            videoService.saveVideo(file, name, username);
+            videoService.saveVideo(file, name, channelName);
 
         return ResponseEntity.ok("Video saved successfully.");
     }

@@ -1,11 +1,12 @@
 package com.ajaksmaniac.streamify.service.implementation;
 
 import com.ajaksmaniac.streamify.dto.VideoDetailsDto;
-import com.ajaksmaniac.streamify.entity.UserEntity;
-import com.ajaksmaniac.streamify.entity.VideoEntity;
+import com.ajaksmaniac.streamify.entity.ChannelEntity;
+import com.ajaksmaniac.streamify.entity.VideoDetailsEntity;
 import com.ajaksmaniac.streamify.exception.UserNotExistantException;
 import com.ajaksmaniac.streamify.exception.VideoAlreadyExistsException;
 import com.ajaksmaniac.streamify.exception.VideoNotFoundException;
+import com.ajaksmaniac.streamify.repository.ChannelRepository;
 import com.ajaksmaniac.streamify.repository.UserRepository;
 import com.ajaksmaniac.streamify.repository.VideoRepository;
 import com.ajaksmaniac.streamify.service.VideoService;
@@ -14,12 +15,10 @@ import lombok.AllArgsConstructor;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,6 +30,8 @@ public class VideoServiceImplementation implements VideoService {
     private VideoRepository videoRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private ChannelRepository channelRepository;
 
 
     @Override
@@ -50,9 +51,9 @@ public class VideoServiceImplementation implements VideoService {
             throw new VideoNotFoundException();
         }
 
-        VideoEntity videoEntity = videoRepository.findByVideoId(id);
+        VideoDetailsEntity videoDetailsEntity = videoRepository.findById(id).get();
 
-        VideoDetailsDto dto = new VideoDetailsDto(videoEntity.getId(), videoEntity.getName(), videoEntity.getUser().getUsername(), "/video/id/"+videoEntity.getId());
+        VideoDetailsDto dto = new VideoDetailsDto(videoDetailsEntity.getId(), videoDetailsEntity.getName(), videoDetailsEntity.getChannel().getChannelName(), "/video/id/"+ videoDetailsEntity.getId());
         return dto;
     }
 
@@ -62,28 +63,30 @@ public class VideoServiceImplementation implements VideoService {
         List<VideoDetailsDto> list = new ArrayList<>();
 
         videoRepository.getAllVideos().stream().forEach(v->{
-            list.add(new VideoDetailsDto(v.getId(), v.getName(),v.getUser().getUsername(), "/video/id/"+v.getId()));
+            list.add(new VideoDetailsDto(v.getId(), v.getName(),v.getChannel().getChannelName(), "/video/id/"+v.getId()));
         });
 
         return list;
     }
 
     @Override
-    public void saveVideo(MultipartFile file, String name, String username) throws IOException {
+    public void saveVideo(MultipartFile file, String name, String channelName) throws IOException {
         if(videoRepository.existsByName(name)){
             throw new VideoAlreadyExistsException();
         }
 
-        if(!userRepository.existsByUsername(username)){
+        if(!channelRepository.existsByChannelName(channelName)){
             throw new UserNotExistantException();
         }
 
-//        UserEntity user = userRepository.findByUsername(username);
-        UserEntity user = userRepository.findByUsername(username).orElseThrow(() ->
-                new UsernameNotFoundException(MessageFormat.format("username {0} not found", username)));
+        ChannelEntity channel = channelRepository.findByChannelName(channelName.toLowerCase());
 
-        VideoEntity newVideoEntity = new VideoEntity(name, user);
-        VideoEntity saved = videoRepository.save(newVideoEntity);
+        if(!userRepository.existsByUsername(channel.getUser().getUsername())){
+            throw new UserNotExistantException();
+        }
+
+        VideoDetailsEntity newVideoDetailsEntity = new VideoDetailsEntity(name, channel);
+        VideoDetailsEntity saved = videoRepository.save(newVideoDetailsEntity);
         FileUtil.saveFile(saved.getId().toString(), name,file);
     }
 

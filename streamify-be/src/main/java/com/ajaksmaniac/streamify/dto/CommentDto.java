@@ -15,5 +15,12 @@ public class CommentDto {
 
     private String content;
     private Long videoId;
-    private Long userId;
+    private String username;
+
+    public CommentDto(String content,Long videoId,String username){
+        this.content =content;
+        this.videoId = videoId;
+        this.username = username;
+    }
+
 }

@@ -15,12 +15,23 @@ import java.util.Collections;
 public class UserEntity implements UserDetails {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.TABLE)
     @Column(name = "user_id")
     private Long id;
+
+    @Column(name = "username", nullable = false, unique = true)
     private String username;
+
+    @Column(name = "password", nullable = false)
     private String password;
-    private boolean isAdmin;
+
+    @Column(name = "isActive", nullable = false )
+    private boolean isActive;
+
+    @OneToOne()
+    @JoinColumn(name = "role_id", nullable = false)
+    private RoleEntity role;
+
 
     public String getIdString() {
         return id.toString();
