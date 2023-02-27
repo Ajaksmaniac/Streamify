@@ -1,8 +1,6 @@
 package com.ajaksmaniac.streamify.service;
 
 import com.ajaksmaniac.streamify.dto.CommentDto;
-import com.ajaksmaniac.streamify.entity.CommentEntity;
-import com.ajaksmaniac.streamify.entity.VideoEntity;
 
 import java.util.List;
 

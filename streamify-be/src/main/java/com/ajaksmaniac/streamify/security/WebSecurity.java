@@ -1,5 +1,6 @@
 package com.ajaksmaniac.streamify.security;
 
+import com.ajaksmaniac.streamify.entity.UserEntity;
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
@@ -16,10 +17,12 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
@@ -37,9 +40,12 @@ import org.springframework.security.web.server.csrf.CsrfWebFilter;
 import org.springframework.security.web.server.util.matcher.ServerWebExchangeMatcher;
 import org.springframework.security.web.server.util.matcher.ServerWebExchangeMatchers;
 
+import java.nio.file.attribute.UserPrincipal;
+
 
 @Configuration
 @EnableMethodSecurity(prePostEnabled = true)
+@EnableWebSecurity
 @Slf4j
 public class WebSecurity {
 
@@ -59,7 +65,7 @@ public class WebSecurity {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .httpBasic().disable()
-                .csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()).ignoringRequestMatchers("/auth/*","*"))
+                .csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()).ignoringRequestMatchers("/auth/login","/auth/register","*"))
                 .oauth2ResourceServer(oauth2 ->
                         oauth2.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtToUserConverter))
                 )
@@ -70,7 +76,6 @@ public class WebSecurity {
                 );
         return http.build();
     }
-
 
 
     @Bean

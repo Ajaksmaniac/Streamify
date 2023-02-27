@@ -1,7 +1,6 @@
 package com.ajaksmaniac.streamify.service;
 
 import com.ajaksmaniac.streamify.dto.VideoDetailsDto;
-import com.ajaksmaniac.streamify.entity.VideoEntity;
 import org.springframework.core.io.Resource;
 import org.springframework.web.multipart.MultipartFile;
 

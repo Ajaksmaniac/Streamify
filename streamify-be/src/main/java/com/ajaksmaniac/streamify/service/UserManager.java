@@ -1,6 +1,7 @@
 package com.ajaksmaniac.streamify.service;
 
 import com.ajaksmaniac.streamify.entity.UserEntity;
+import com.ajaksmaniac.streamify.exception.UserNotExistantException;
 import com.ajaksmaniac.streamify.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -27,6 +28,12 @@ public class UserManager implements UserDetailsManager {
 
     @Override
     public void updateUser(UserDetails user) {
+       UserEntity entity = userRepository.findByUsername(user.getUsername()).orElseThrow(() ->
+                new UsernameNotFoundException(MessageFormat.format("username {0} not found", user.getUsername())));
+
+        entity.setUsername(user.getUsername());
+        entity.setPassword(passwordEncoder.encode(user.getPassword()));
+        userRepository.save((UserEntity) user);
 
     }
 
@@ -40,6 +47,7 @@ public class UserManager implements UserDetailsManager {
 
     }
 
+
     @Override
     public boolean userExists(String username) {
         return userRepository.existsByUsername(username);
@@ -49,6 +57,11 @@ public class UserManager implements UserDetailsManager {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepository.findByUsername(username).orElseThrow(() ->
                 new UsernameNotFoundException(MessageFormat.format("username {0} not found", username)));
+    }
+
+    public UserDetails getUserById(Long id) throws UserNotExistantException {
+        return userRepository.findById(id).orElseThrow(() ->
+                new UsernameNotFoundException(MessageFormat.format("User with id {0} not found", id)));
     }
 
 
