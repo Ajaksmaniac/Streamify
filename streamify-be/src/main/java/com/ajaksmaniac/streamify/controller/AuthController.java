@@ -57,20 +57,5 @@ public class AuthController {
         return ResponseEntity.ok(tokenGenerator.createToken(authentication));
     }
 
-    @PostMapping("/{id}/changePassword")
-    @PreAuthorize("#username == authentication.principal.username")
-    public ResponseEntity<String> changePassword(@RequestParam("username") String username,
-                                                 @RequestParam("newPassword") String newPassword) {
-        log.info("Token : {}", SecurityContextHolder.getContext().getAuthentication());
-        UserDetails userEntity = userDetailsManager.loadUserByUsername(username);
-
-        ((UserEntity) userEntity).setPassword(newPassword);
-
-        userDetailsManager.updateUser(userEntity);
-
-        return ResponseEntity.ok("Password changed");
-
-
-    }
 
 }

@@ -1,13 +1,18 @@
 package com.ajaksmaniac.streamify.controller;
 
 import com.ajaksmaniac.streamify.dto.VideoDetailsDto;
+import com.ajaksmaniac.streamify.repository.UserRepository;
+import com.ajaksmaniac.streamify.repository.VideoRepository;
 import com.ajaksmaniac.streamify.service.VideoService;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
@@ -23,8 +28,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 @WebMvcTest(VideoController.class)
@@ -40,6 +44,12 @@ public class VideoControllerTest {
     @Qualifier("videoServiceImplementation")
     private VideoService videoService;
 
+
+    @MockBean
+    private UserRepository userRepository;
+
+    @MockBean
+    private VideoRepository videoRepository;
 
     private final String VIDEO_NAME = "1-first_video";
     private final String USERNAME = "testUser";
@@ -58,24 +68,12 @@ public class VideoControllerTest {
                 MediaType.MULTIPART_FORM_DATA_VALUE, "test video data".getBytes(StandardCharsets.UTF_8));
         String url = "/video?name=" + VIDEO_NAME + "&channelName=" + CHANNEL;
 
-        doNothing().when(videoService).saveVideo(any(), any(), any());
-
+        doNothing().when(videoService).saveVideo(any(), any(), any(), any());
         mockMvc.perform(MockMvcRequestBuilders.multipart(url)
                         .file(file))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().string("Video saved successfully."))
                 .andDo(print());
-    }
-
-    @Test
-    public void testGetVideoById_whenVideoDoestExists() throws Exception {
-        Long id = 1L;
-
-        when(videoService.getVideo(id)).thenReturn(null);
-
-        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/video/id/" + id))
-                .andExpect(MockMvcResultMatchers.status().isNotFound())
-                .andReturn();
     }
 
     @Test

@@ -1,10 +1,8 @@
 package com.ajaksmaniac.streamify.controller;
 
 import com.ajaksmaniac.streamify.dto.CommentDto;
-import com.ajaksmaniac.streamify.entity.CommentEntity;
-import com.ajaksmaniac.streamify.exception.CommentNotFoundException;
-import com.ajaksmaniac.streamify.exception.UserNotExistantException;
-import com.ajaksmaniac.streamify.exception.VideoNotFoundException;
+import com.ajaksmaniac.streamify.exception.user.UserNotExistantException;
+import com.ajaksmaniac.streamify.exception.user.VideoNotFoundException;
 import com.ajaksmaniac.streamify.service.CommentService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -51,12 +48,7 @@ public class CommentController {
 
     @DeleteMapping("{id}")
     public ResponseEntity<String> deleteComment(@PathVariable("id") Long id){
-        try{
             commentService.deleteById(id);
-            return ResponseEntity.status(HttpStatus.OK).body("Deleted Comment with id:" + id);
-        }catch (CommentNotFoundException e){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
-
+            return ResponseEntity.status(HttpStatus.OK).body("Comment Deleted");
     }
 }
