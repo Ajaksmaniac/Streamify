@@ -1,8 +1,8 @@
-package com.ajaksmaniac.streamify.exception;
+package com.ajaksmaniac.streamify.exception.user;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-@ResponseStatus(value = HttpStatus.CONFLICT, reason = "A video with this name already exists")
+@ResponseStatus
 public class VideoAlreadyExistsException extends RuntimeException{
 }

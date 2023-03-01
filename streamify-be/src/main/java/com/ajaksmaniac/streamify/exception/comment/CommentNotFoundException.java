@@ -1,9 +1,9 @@
-package com.ajaksmaniac.streamify.exception;
+package com.ajaksmaniac.streamify.exception.comment;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 
-@ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "A comment with this id doesn't exist")
+@ResponseStatus
 public class CommentNotFoundException extends RuntimeException{
 }
