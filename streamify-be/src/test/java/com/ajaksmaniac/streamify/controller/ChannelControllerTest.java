@@ -2,34 +2,22 @@ package com.ajaksmaniac.streamify.controller;
 
 
 import com.ajaksmaniac.streamify.dto.ChannelDto;
+import com.ajaksmaniac.streamify.dto.ChannelOnlyDto;
 import com.ajaksmaniac.streamify.entity.ChannelEntity;
 import com.ajaksmaniac.streamify.entity.UserEntity;
-import com.ajaksmaniac.streamify.exception.UserNotExistantException;
 import com.ajaksmaniac.streamify.repository.ChannelRepository;
 import com.ajaksmaniac.streamify.repository.UserRepository;
 import com.ajaksmaniac.streamify.service.ChannelService;
-import com.ajaksmaniac.streamify.service.VideoService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.MockitoAnnotations;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.RequestBuilder;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
 
-import java.nio.charset.StandardCharsets;
-import java.util.Objects;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -71,7 +59,7 @@ public class ChannelControllerTest {
         when(userRepository.findByUsername("test")).thenReturn(Optional.of(userEntity));
 
         when(channelRepository.getChannelById(id)).thenReturn(channelEntity);
-//        when(channelService.getChannelById(id)).thenReturn(channelEntity);
+        when(channelService.getChannelById(id)).thenReturn(new ChannelDto(1L,"testChannel","test",null));
 
         // act
         ResponseEntity<ChannelDto> responseEntity = channelController.getChannelDetailsById(id);
@@ -79,8 +67,10 @@ public class ChannelControllerTest {
         // assert
         assertNotNull(responseEntity);
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        assertEquals(id, Objects.requireNonNull(responseEntity.getBody()).getId());
-        assertEquals("testChannel", Objects.requireNonNull(responseEntity.getBody()).getChannelName());
+//        assertEquals(id, Objects.requireNonNull(responseEntity.getBody()).getId());
+//        assertEquals("testChannel", Objects.requireNonNull(responseEntity.getBody()).getChannelName());
+        assertEquals(id, responseEntity.getBody().getId());
+        assertEquals("testChannel", responseEntity.getBody().getChannelName());
 
 
     }
@@ -88,7 +78,7 @@ public class ChannelControllerTest {
     @Test
     void testSaveChannel(){
         // arrange
-        ChannelDto channelDto = new ChannelDto();
+        ChannelOnlyDto channelDto = new ChannelOnlyDto();
         doNothing().when(channelService).createChannel(channelDto);
 
         // act

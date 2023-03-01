@@ -4,28 +4,29 @@ import com.ajaksmaniac.streamify.dto.CommentDto;
 import com.ajaksmaniac.streamify.entity.CommentEntity;
 import com.ajaksmaniac.streamify.entity.UserEntity;
 import com.ajaksmaniac.streamify.entity.VideoDetailsEntity;
-import com.ajaksmaniac.streamify.exception.CommentNotFoundException;
-import com.ajaksmaniac.streamify.exception.UserNotExistantException;
-import com.ajaksmaniac.streamify.exception.VideoNotFoundException;
+import com.ajaksmaniac.streamify.exception.comment.CommentNotFoundException;
+import com.ajaksmaniac.streamify.exception.comment.UserNotPermittedToDeleteOthersCommentsException;
+import com.ajaksmaniac.streamify.exception.user.VideoNotFoundException;
 import com.ajaksmaniac.streamify.mapper.CommentMapper;
-import com.ajaksmaniac.streamify.mapper.VideoDetailsMapper;
 import com.ajaksmaniac.streamify.repository.CommentRepository;
 import com.ajaksmaniac.streamify.repository.UserRepository;
 import com.ajaksmaniac.streamify.repository.VideoRepository;
 import com.ajaksmaniac.streamify.service.CommentService;
-import com.nimbusds.jwt.util.DateUtils;
+import com.ajaksmaniac.streamify.util.UserUtil;
 import lombok.AllArgsConstructor;
-import org.hibernate.type.descriptor.DateTimeUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.sql.Date;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
+@Slf4j
 public class CommentServiceImplementation implements CommentService {
 
     @Autowired
@@ -40,9 +41,12 @@ public class CommentServiceImplementation implements CommentService {
     @Autowired
     private CommentMapper mapper;
 
+    @Autowired
+    UserUtil userUtil;
+
     @Override
     public CommentDto getComment(Long id) {
-        if(!commentRepository.existsById(id)){
+        if (!commentRepository.existsById(id)) {
             throw new CommentNotFoundException();
         }
         CommentEntity en = commentRepository.findByCommentId(id);
@@ -53,43 +57,62 @@ public class CommentServiceImplementation implements CommentService {
 
     @Override
     public void saveComment(CommentDto comment) {
-        if(!videoRepository.existsById((comment.getVideoId()))){
+        if (!videoRepository.existsById((comment.getVideoId()))) {
             throw new VideoNotFoundException();
         }
 
-        if(!userRepository.existsByUsername((comment.getUsername()))){
-            throw new UserNotExistantException();
-        }
+        LocalDateTime now = LocalDateTime.now();
+        LocalDate date = now.toLocalDate();
 
-        UserEntity user = userRepository.findByUsername(comment.getUsername()).get();
         VideoDetailsEntity video = videoRepository.findById(comment.getVideoId()).get();
 
-        CommentEntity entity = new CommentEntity();
-        entity.setContent(comment.getContent());
-        entity.setUser(user);
-        entity.setVideoDetails(video);
-        entity.setId(null);
+        CommentEntity entity = mapper.convertToEntity(comment);
+        entity.setCommentedAt(java.sql.Date.valueOf(date));
 
-        entity.setCommentedAt(Date.valueOf(LocalDate.now()));
+
+        entity.setUser(sessionUser());
+        entity.setVideoDetails(video);
+
         commentRepository.save(entity);
     }
 
     @Override
     public List<CommentDto> getCommentsForVideo(Long videoId) {
-        if(!videoRepository.existsById(videoId)){
+        if (!videoRepository.existsById(videoId)) {
             throw new VideoNotFoundException();
         }
 
-        List<CommentDto> list = commentRepository.findByMovieId(videoId).stream().map(o-> mapper.convertToDto(o)).collect(Collectors.toList());
+        List<CommentDto> list = commentRepository.findByMovieId(videoId).stream().map(o -> mapper.convertToDto(o)).collect(Collectors.toList());
         return list;
     }
 
 
     @Override
     public void deleteById(Long id) {
-        if(!commentRepository.existsById(id)){
+        if (!commentRepository.existsById(id)) {
             throw new CommentNotFoundException();
         }
+        CommentEntity comment = commentRepository.getById(id);
+        if (!userUtil.isUserAdmin(sessionUser())) {
+            boolean flag = videoRepository.isVideoOwnedByUser(comment.getVideoDetails().getId(), sessionUser().getId());
+            //is User owner of the video
+            log.info(sessionUser().toString());
+
+            log.info(String.valueOf(flag));
+            if (videoRepository.isVideoOwnedByUser(comment.getVideoDetails().getId(), sessionUser().getId())) {
+                // Is user owner of the comment
+                if (comment.getUser().getId().equals(sessionUser().getId())) {
+                    throw new UserNotPermittedToDeleteOthersCommentsException();
+                }
+
+            }
+
+        }
+
         commentRepository.deleteById(id);
+    }
+
+    private UserEntity sessionUser() {
+        return (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 }

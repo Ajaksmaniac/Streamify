@@ -1,7 +1,8 @@
 package com.ajaksmaniac.streamify.service;
 
+import com.ajaksmaniac.streamify.entity.RoleEntity;
 import com.ajaksmaniac.streamify.entity.UserEntity;
-import com.ajaksmaniac.streamify.exception.UserNotExistantException;
+import com.ajaksmaniac.streamify.exception.user.UserNotExistantException;
 import com.ajaksmaniac.streamify.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -23,6 +24,10 @@ public class UserManager implements UserDetailsManager {
     @Override
     public void createUser(UserDetails user) {
         ((UserEntity) user).setPassword(passwordEncoder.encode(user.getPassword()));
+        ((UserEntity) user).setRole(new RoleEntity(1L, "user"));
+        ((UserEntity) user).setActive(true);
+
+
         userRepository.save((UserEntity) user);
     }
 

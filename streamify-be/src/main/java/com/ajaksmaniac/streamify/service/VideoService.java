@@ -18,6 +18,10 @@ public interface VideoService {
     List<VideoDetailsDto> getAllVideosDetails();
 
 
-    void saveVideo(MultipartFile file, String name, String username) throws IOException;
+    void saveVideo(MultipartFile file, String name, String channelName, String description) throws IOException;
     List<String> getAllVideoNames();
+
+    void deleteVideo(Long id) throws IOException;
+
+    void updateVideo(Long id, String name, String description);
 }
