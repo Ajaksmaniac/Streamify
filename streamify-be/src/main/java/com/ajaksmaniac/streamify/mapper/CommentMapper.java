@@ -8,6 +8,8 @@ import com.ajaksmaniac.streamify.entity.RoleEntity;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
+import java.sql.Date;
+
 @Component
 public class CommentMapper {
 
@@ -18,6 +20,7 @@ public class CommentMapper {
 
         CommentDto dto = mapper.map(entity, CommentDto.class);
         dto.setUsername(entity.getUser().getUsername());
+        dto.setCommented_at(Date.valueOf(entity.getCommentedAt().toLocalDate()));
         return dto;
     }
 
