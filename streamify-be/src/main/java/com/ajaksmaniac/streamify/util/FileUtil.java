@@ -44,4 +44,21 @@ public class FileUtil {
         return null;
     }
 
+    public void deleteFile(String id) throws IOException {
+        Path dirPath = Paths.get("Files-upload");
+        Files.list(dirPath).forEach(f ->{
+            if(f.getFileName().toString().startsWith(id)){
+
+                try {
+                    Files.delete(f.toAbsolutePath());
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
+
+
+
+    }
+
 }

@@ -29,7 +29,7 @@ public class ChannelEntity{
     @JoinColumn(name = "user_id", nullable = false)
     private UserEntity user;
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL,mappedBy = "channel", orphanRemoval = true)
     private List<VideoDetailsEntity> videos;
 
 }

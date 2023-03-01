@@ -6,6 +6,8 @@ import lombok.*;
 import org.modelmapper.ModelMapper;
 
 import java.sql.Date;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Table(name = "video_details")
 @Data
@@ -25,12 +27,14 @@ public class VideoDetailsEntity{
     private Date postedAt;
 
     private String videoUrl;
-    
+
+    @OneToMany(cascade = CascadeType.ALL,mappedBy = "videoDetails",orphanRemoval = true)
+    private List<CommentEntity> comments;
     @ManyToOne
     @JoinColumn(name = "channel_id", nullable = false)
     private ChannelEntity channel;
 
-    public VideoDetailsEntity(String name, ChannelEntity channel) {
+    public VideoDetailsEntity(String name, ChannelEntity channel, Date postedAt, String description) {
         this.name = name;
         this.channel = channel;
     }

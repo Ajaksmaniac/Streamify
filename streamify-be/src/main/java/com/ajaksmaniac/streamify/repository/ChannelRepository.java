@@ -3,6 +3,7 @@ package com.ajaksmaniac.streamify.repository;
 import com.ajaksmaniac.streamify.entity.ChannelEntity;
 import com.ajaksmaniac.streamify.entity.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -17,5 +18,6 @@ public interface ChannelRepository extends JpaRepository<ChannelEntity, Long> {
     ChannelEntity getChannelById(Long id);
 
 //    List<ChannelEntity> getAllChannels();
+    List<ChannelEntity> findByUserId(Long id);
 
 }
