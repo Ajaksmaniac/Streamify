@@ -20,9 +20,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @AllArgsConstructor
@@ -119,7 +117,6 @@ public class ChannelServiceImplementation implements ChannelService {
             List<ChannelEntity> channels =channelRepository.findByUserId(sessionUser().getId()).stream().filter(c -> Objects.equals(c.getId(), id)).toList();
             if(channels.isEmpty()) throw new UserNotPermittedToDeleteChannelForOthersException();
         }
-//        videoRepository.deleteAllVideosDetailsByChannelId(id);
 
         channelRepository.deleteById(id);
     }
@@ -127,6 +124,21 @@ public class ChannelServiceImplementation implements ChannelService {
     @Override
     public List<ChannelDto> getAllChannels() {
         return channelMapper.convertListToDTO(channelRepository.findAll());
+    }
+
+    @Override
+    public List<ChannelDto> search(String keywords) {
+        Map channelMap = new HashMap<Long, ChannelEntity>();
+        List<String> keywordsList = Arrays.stream(keywords.split(" ")).toList();
+        keywordsList.forEach(kw ->{
+            channelRepository.search(kw).forEach(v->{
+                if(!channelMap.containsKey(v.getId())){
+                    channelMap.put(v.getId(),v);
+                }
+            });
+        });
+
+        return channelMapper.convertListToDTO(channelMap.values().stream().toList());
     }
 
     private UserEntity sessionUser() {

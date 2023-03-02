@@ -208,7 +208,10 @@ GET `/video/search`
 - Returns list of videos matched by given keywords
 
 Params:
-keywords: String (case keywords=video matrix)
+- keywords: String 
+
+
+*/video/search?keywords=video matrix*
 
 Response
 ```
@@ -335,6 +338,37 @@ Response
     "username": "testChannel1",
     "channelName": "user"
 }
+```
+---
+GET `/channel/search`
+- Doesnt need Authentication
+- Returns list of channels matched by given keywords
+
+Params:
+
+- keywords: String (case keywords=test)
+
+*/channel/search?keywords=test*
+
+Response
+```
+[
+    {
+        "id": 1552,
+        "username": "testUser1",
+        "channelName": "testChannel"
+    },
+    {
+        "id": 1,
+        "username": "Ajaksmaniac",
+        "channelName": "testChannel1"
+    },
+    {
+        "id": 1352,
+        "username": "testUser1",
+        "channelName": "testChannel3"
+    }
+]
 ```
 
 ---
