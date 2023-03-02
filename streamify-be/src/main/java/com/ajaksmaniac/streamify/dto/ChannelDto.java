@@ -21,15 +21,8 @@ public class ChannelDto {
 
     private Long id;
 
-    private String channelName;
 
     private String username;
+    private String channelName;
 
-    private List<VideoDetailsDto> videos;
-
-    public ChannelDto(Long id, String channelName, String username) {
-        this.id = id;
-        this.channelName = channelName;
-        this.username = username;
-    }
 }

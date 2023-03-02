@@ -11,7 +11,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
-public class FileUtil {
+public class VideoUtilService {
     private Path foundFile;
     public static void saveFile(String id,String fileName, MultipartFile multipartFile) throws IOException{
         Path uploadPath = Paths.get("Files-Upload");
@@ -32,7 +32,7 @@ public class FileUtil {
 
         Path dirPath = Paths.get("Files-upload");
         Files.list(dirPath).forEach(f ->{
-            if(f.getFileName().toString().startsWith(id)){
+            if(f.getFileName().toString().startsWith(id+"-")){
                 foundFile = f;
                 return;
             }
@@ -44,10 +44,10 @@ public class FileUtil {
         return null;
     }
 
-    public void deleteFile(String id) throws IOException {
+    public static void deleteFile(String id) throws IOException {
         Path dirPath = Paths.get("Files-upload");
         Files.list(dirPath).forEach(f ->{
-            if(f.getFileName().toString().startsWith(id)){
+            if(f.getFileName().toString().startsWith(id+"-")){
 
                 try {
                     Files.delete(f.toAbsolutePath());
@@ -57,8 +57,26 @@ public class FileUtil {
             }
         });
 
+    }
 
+    public static void updateVideo(String id,String fileName, MultipartFile file) throws IOException {
+        deleteFile(id);
+        saveFile(id,fileName, file);
+    }
 
+    public static void updateVideo(String id,String fileName) throws IOException {
+        Path dirPath = Paths.get("Files-upload");
+        Files.list(dirPath).forEach(f ->{
+            if(f.getFileName().toString().startsWith(id+"-")){
+
+                try {
+                    Files.move(f,f.resolveSibling(id+"-"+fileName),StandardCopyOption.REPLACE_EXISTING);
+
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
     }
 
 }

@@ -91,19 +91,7 @@ Response
     "instance": "/video/id/5"
 }
 ```
----
-GET `/video/all`
-- Doesn't need Authentication
-- Returns list of all video names
 
-Response
-```
-[
-    "video1",
-    "video2",
-    "video3"
-]
-```
 ---
 GET `/video/details/id/{id}`
 - Doesn't need Authentication
@@ -130,19 +118,19 @@ GET `/video/details`
     {
         "id": 1,
         "name": "first_video",
-        "channel": "testChannel",
+        "channelId": 1,
         "url": "/video/id/1"
     },
     {
         "id": 2,
         "name": "second_video",
-        "channel": "testChannel",
+        "channelId": 1,
         "url": "/video/id/2"
     },
     {
         "id": 3,
         "name": "third_video",
-        "channel": "testChannel",
+        "channelId": 3,
         "url": "/video/id/3"
     }
 ]
@@ -174,17 +162,23 @@ POST `/video`
 Body Params:
 - file: File
 - name: String,
-- channelName: String
+- channelId: Long
 - description String
 
 
 Response
 ```
-"Video saved successfully."
+{
+    "id": 1502,
+    "name": "third-Video",
+    "channelId": 1,
+    "url": "/video/id/1502",
+    "description": "video descripton"
+}
 ```
 ---
 PUT `/video/id/{id}`
-- updates only Video and and its description
+- updates only vide binary, name and description
 - Needs Authentication header with bearer token
 - Authenticated user can only update videos on his channel
 - If user has admin role, it can update videos on any channel
@@ -194,38 +188,66 @@ PUT `/video/id/{id}`
 
 Body Params:
 - name: String,
-- channelName: String
+- description: String
+- file?: File (Optional in case only name and description wants to be changed)
 
 Response
 
 ```
-"Video Updated successfully."
+{
+    "id": 1502,
+    "name": "third_video",
+    "channelId": 1,
+    "url": "/video/id/1502",
+    "description": "Very good video"
+}
+```
+---
+GET `/video/search`
+- Doesnt need Authentication
+- Returns list of videos matched by given keywords
+
+Params:
+keywords: String (case keywords=video matrix)
+
+Response
+```
+[
+    {
+        "id": 1,
+        "name": "first_video ",
+        "channelId": 1,
+        "url": "/video/id/1",
+        "description": "Very good video, should check it out NOW"
+    },
+    {
+        "id": 1453,
+        "name": "second-Video",
+        "channelId": 1,
+        "url": "/video/id/1453",
+        "description": "Very good video, should check it out"
+    },
+    ,
+    {
+        "id": 3,
+        "name": "Matrix",
+        "channelId": 1,
+        "url": "/video/id/3",
+        "description": "Very good movie, should check it out"
+    }
+]
 ```
 ---
 ## REST Channel controller Definition
 
 GET `/channel/id/{id}`
 - Doesn't need Authentication
-- Returns channel details object with all videos on that channel
+- Returns channel details object
 ```
 {
     "id": 1,
-    "channelName": "testChannel",
-    "username": "Ajaksmaniac",
-    "videos": [
-        {
-            "id": 1,
-            "name": "first_video",
-            "channel": "testChannel",
-            "url": "/video/id/1"
-        },
-        {
-            "id": 2,
-            "name": "second-video",
-            "channel": "testChannel",
-            "url": "/video/id/2"
-        }
-    ]
+    "username": "user",
+    "channelName": "channelName"
 }
 
 ```
@@ -241,7 +263,8 @@ Response
         "id": 1,
         "channelName": "testChannel1",
         "username": "user1",
-    },{
+    },
+    {
         "id": 2,
         "channelName": "testChannel2",
         "username": "user2",
@@ -267,7 +290,11 @@ Request body
 ```
 Response
 ```
-"Channel saved"
+{
+    "id": 1552,
+    "username": "user",
+    "channelName": "testChannel"
+}
 ```
 ---
 DELETE `/channel/{id}`
@@ -296,14 +323,18 @@ Request body
 ```
 {
     "id": 1,
-    "channelName": "testChannel1",
-    "username": "Ajaksmaniac"
+    "channelName": "testChannel1", (channelName was testChannel)
+    "username": "user"
 }
 ```
 
 Response
 ```
-"Channel Updated"
+{
+    "id": 1,
+    "username": "testChannel1",
+    "channelName": "user"
+}
 ```
 
 ---
@@ -326,7 +357,11 @@ Request body
 Response
 ```
 {
-    "Comment saved"
+    "id": 123,
+    "content": "Nice Video",
+    "videoId": 1,
+    "userId": 1,
+    "commented_at": "2023-03-02"
 }
 ```
 ---
@@ -341,14 +376,14 @@ Response
         "id": 1,
         "content": "Nice Video",
         "videoId": 1,
-        "username": "user1",
+        "userId": 3,
         "commented_at": "2023-02-27"
     },
     {
         "id": 2,
         "content": "Very Nice Video",
         "videoId": 1,
-        "username": "user2",
+        "userId": 4,
         "commented_at": "2023-02-24"
     },
 ]
@@ -363,11 +398,11 @@ GET `/comment/{id}`
 Response
 ```
 {
-    "id": 2,
-    "content": "Very Nice Video",
-    "videoId": 1,
-    "username": "user2",
-    "commented_at": "2023-02-24"
+    "id": 1602,
+    "content": "Nice Video",
+    "videoId": 1502,
+    "userId": 702,
+    "commented_at": "2023-03-02"
 }
 ```
 DELETE `/comment/{id}`

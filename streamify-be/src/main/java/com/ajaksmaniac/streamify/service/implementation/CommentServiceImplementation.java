@@ -6,10 +6,9 @@ import com.ajaksmaniac.streamify.entity.UserEntity;
 import com.ajaksmaniac.streamify.entity.VideoDetailsEntity;
 import com.ajaksmaniac.streamify.exception.comment.CommentNotFoundException;
 import com.ajaksmaniac.streamify.exception.comment.UserNotPermittedToDeleteOthersCommentsException;
-import com.ajaksmaniac.streamify.exception.user.VideoNotFoundException;
+import com.ajaksmaniac.streamify.exception.video.VideoNotFoundException;
 import com.ajaksmaniac.streamify.mapper.CommentMapper;
 import com.ajaksmaniac.streamify.repository.CommentRepository;
-import com.ajaksmaniac.streamify.repository.UserRepository;
 import com.ajaksmaniac.streamify.repository.VideoRepository;
 import com.ajaksmaniac.streamify.service.CommentService;
 import com.ajaksmaniac.streamify.util.UserUtil;
@@ -28,9 +27,6 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @Slf4j
 public class CommentServiceImplementation implements CommentService {
-
-    @Autowired
-    private UserRepository userRepository;
 
     @Autowired
     private CommentRepository commentRepository;
@@ -56,7 +52,7 @@ public class CommentServiceImplementation implements CommentService {
     }
 
     @Override
-    public void saveComment(CommentDto comment) {
+    public CommentDto saveComment(CommentDto comment) {
         if (!videoRepository.existsById((comment.getVideoId()))) {
             throw new VideoNotFoundException();
         }
@@ -73,7 +69,12 @@ public class CommentServiceImplementation implements CommentService {
         entity.setUser(sessionUser());
         entity.setVideoDetails(video);
 
-        commentRepository.save(entity);
+        return mapper.convertToDto(commentRepository.save(entity));
+    }
+
+    @Override
+    public CommentDto updateComment(CommentDto comment) {
+        return null;
     }
 
     @Override
@@ -94,17 +95,14 @@ public class CommentServiceImplementation implements CommentService {
         }
         CommentEntity comment = commentRepository.getById(id);
         if (!userUtil.isUserAdmin(sessionUser())) {
-            boolean flag = videoRepository.isVideoOwnedByUser(comment.getVideoDetails().getId(), sessionUser().getId());
-            //is User owner of the video
-            log.info(sessionUser().toString());
 
-            log.info(String.valueOf(flag));
-            if (videoRepository.isVideoOwnedByUser(comment.getVideoDetails().getId(), sessionUser().getId())) {
-                // Is user owner of the comment
-                if (comment.getUser().getId().equals(sessionUser().getId())) {
+            // Is user owner of the comment
+            if(!comment.getUser().getId().equals(sessionUser().getId())){
+                //is User owner of the video
+                if (!videoRepository.isVideoOwnedByUser(comment.getVideoDetails().getId(), sessionUser().getId())) {
                     throw new UserNotPermittedToDeleteOthersCommentsException();
-                }
 
+                }
             }
 
         }

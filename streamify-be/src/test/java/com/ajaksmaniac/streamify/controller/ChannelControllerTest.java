@@ -2,7 +2,6 @@ package com.ajaksmaniac.streamify.controller;
 
 
 import com.ajaksmaniac.streamify.dto.ChannelDto;
-import com.ajaksmaniac.streamify.dto.ChannelOnlyDto;
 import com.ajaksmaniac.streamify.entity.ChannelEntity;
 import com.ajaksmaniac.streamify.entity.UserEntity;
 import com.ajaksmaniac.streamify.repository.ChannelRepository;
@@ -59,7 +58,7 @@ public class ChannelControllerTest {
         when(userRepository.findByUsername("test")).thenReturn(Optional.of(userEntity));
 
         when(channelRepository.getChannelById(id)).thenReturn(channelEntity);
-        when(channelService.getChannelById(id)).thenReturn(new ChannelDto(1L,"testChannel","test",null));
+        when(channelService.getChannelById(id)).thenReturn(new ChannelDto(1L,"test","testChannel"));
 
         // act
         ResponseEntity<ChannelDto> responseEntity = channelController.getChannelDetailsById(id);
@@ -78,11 +77,11 @@ public class ChannelControllerTest {
     @Test
     void testSaveChannel(){
         // arrange
-        ChannelOnlyDto channelDto = new ChannelOnlyDto();
+        ChannelDto channelDto = new ChannelDto();
         doNothing().when(channelService).createChannel(channelDto);
 
         // act
-        ResponseEntity<String> responseEntity = channelController.saveChannel(channelDto);
+        ResponseEntity<ChannelDto> responseEntity = channelController.saveChannel(channelDto);
 
         // assert
         assertNotNull(responseEntity);

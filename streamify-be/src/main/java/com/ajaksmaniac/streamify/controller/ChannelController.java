@@ -2,7 +2,6 @@ package com.ajaksmaniac.streamify.controller;
 
 
 import com.ajaksmaniac.streamify.dto.ChannelDto;
-import com.ajaksmaniac.streamify.dto.ChannelOnlyDto;
 import com.ajaksmaniac.streamify.service.ChannelService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,10 +26,10 @@ public class ChannelController {
     }
 
     @PostMapping
-    public ResponseEntity<String> saveChannel(@RequestBody ChannelOnlyDto dto) {
+    public ResponseEntity<ChannelDto> saveChannel(@RequestBody ChannelDto dto) {
 
-        channelService.createChannel(dto);
-        return ResponseEntity.ok("Channel saved");
+
+        return ResponseEntity.ok(channelService.createChannel(dto));
 
     }
 
@@ -42,10 +41,9 @@ public class ChannelController {
     }
 
     @PutMapping
-    public  ResponseEntity<String> updateChannel(@RequestBody ChannelOnlyDto dto){
-        channelService.updateChannel(dto);
+    public  ResponseEntity<ChannelDto> updateChannel(@RequestBody ChannelDto dto){
 
-        return ResponseEntity.ok("Channel updated");
+        return ResponseEntity.ok(channelService.updateChannel(dto));
 
     }
 

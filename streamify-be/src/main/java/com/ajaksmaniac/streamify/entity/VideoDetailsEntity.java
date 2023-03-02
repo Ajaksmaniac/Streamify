@@ -33,10 +33,19 @@ public class VideoDetailsEntity{
     @ManyToOne
     @JoinColumn(name = "channel_id", nullable = false)
     private ChannelEntity channel;
-
     public VideoDetailsEntity(String name, ChannelEntity channel, Date postedAt, String description) {
         this.name = name;
         this.channel = channel;
+    }
+
+    public VideoDetailsEntity(Long id,String name, ChannelEntity channel, String description,Date postedAt,String videoUrl) {
+        this.id = id;
+        this.channel = channel;
+        this.name = name;
+        this.postedAt = postedAt;
+        this.description = description;
+        this.videoUrl = videoUrl;
+
     }
 
 }

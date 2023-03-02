@@ -17,14 +17,13 @@ public class CommentDto {
 
     private String content;
     private Long videoId;
-    private String username;
-
+    private Long userId;
     private Date commented_at;
 
-    public CommentDto(String content,Long videoId,String username,Date commented_at){
+    public CommentDto(String content,Long videoId,Long userId,Date commented_at){
         this.content =content;
         this.videoId = videoId;
-        this.username = username;
+        this.userId = userId;
         this.commented_at = commented_at;
     }
 

@@ -17,11 +17,11 @@ public interface VideoService {
 
     List<VideoDetailsDto> getAllVideosDetails();
 
-
-    void saveVideo(MultipartFile file, String name, String channelName, String description) throws IOException;
-    List<String> getAllVideoNames();
+    VideoDetailsDto saveVideo(MultipartFile file, String name, Long channelId, String description) throws IOException;
 
     void deleteVideo(Long id) throws IOException;
 
-    void updateVideo(Long id, String name, String description);
+    VideoDetailsDto updateVideo(Long id, String name, String description, MultipartFile file) throws IOException;
+
+    List<VideoDetailsDto> search(String keywords);
 }

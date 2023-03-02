@@ -1,8 +1,6 @@
 package com.ajaksmaniac.streamify.controller;
 
 import com.ajaksmaniac.streamify.dto.CommentDto;
-import com.ajaksmaniac.streamify.exception.user.UserNotExistantException;
-import com.ajaksmaniac.streamify.exception.user.VideoNotFoundException;
 import com.ajaksmaniac.streamify.service.CommentService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,16 +33,12 @@ public class CommentController {
     }
 
     @PostMapping
-    public ResponseEntity<String> saveComment(@RequestBody CommentDto comment){
-        try {
-            commentService.saveComment(comment);
-            return ResponseEntity.ok("Comment saved");
+    public ResponseEntity<CommentDto> saveComment(@RequestBody CommentDto comment){
 
-        }catch (UserNotExistantException | VideoNotFoundException e){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
+
+            return ResponseEntity.ok(commentService.saveComment(comment));
+
     }
-
 
     @DeleteMapping("{id}")
     public ResponseEntity<String> deleteComment(@PathVariable("id") Long id){

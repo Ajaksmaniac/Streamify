@@ -15,8 +15,9 @@ public class VideoDetailsDto {
     private String name;
 
 //    private String postedBy;
-    private String channel;
+    private Long channelId;
 
     private String url;
+    private String description;
 
 }

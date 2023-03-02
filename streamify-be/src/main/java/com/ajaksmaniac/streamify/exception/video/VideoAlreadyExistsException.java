@@ -1,8 +1,8 @@
-package com.ajaksmaniac.streamify.exception.user;
+package com.ajaksmaniac.streamify.exception.video;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus
-public class VideoNotFoundException extends RuntimeException{
+public class VideoAlreadyExistsException extends RuntimeException{
 }
