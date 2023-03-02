@@ -16,7 +16,4 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
     @Query(value = "SELECT u FROM UserEntity u JOIN FETCH u.role WHERE u.id = :id")
     UserEntity findByUserId(@Param("id") Long id);
 
-    @Query(nativeQuery = true,value = "SELECT username FROM user")
-    List<String> getAllUsernames();
-
 }

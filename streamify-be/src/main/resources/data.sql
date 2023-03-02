@@ -1,0 +1,1 @@
+INSERT IGNORE INTO RoleEntity (name) VALUES ('admin'), ('content_creator'), ('user');

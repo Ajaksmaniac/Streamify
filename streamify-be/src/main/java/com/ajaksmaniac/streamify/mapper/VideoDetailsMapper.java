@@ -15,7 +15,14 @@ public class VideoDetailsMapper {
 
     ModelMapper mapper = new ModelMapper();
     public VideoDetailsDto convertToDto(VideoDetailsEntity entity) {
-        return mapper.map(entity, VideoDetailsDto.class);
+
+        VideoDetailsDto dto =mapper.map(entity, VideoDetailsDto.class);
+//        if(entity.getChannel() != null){
+//            dto.setChannelId(entity.getChannel().getId());
+//        }
+
+        return dto;
+
     }
 
     public List<VideoDetailsDto> convertListToDTO(List<VideoDetailsEntity> entityList ){

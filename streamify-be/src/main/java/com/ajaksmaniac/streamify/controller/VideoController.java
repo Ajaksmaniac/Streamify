@@ -1,6 +1,7 @@
 package com.ajaksmaniac.streamify.controller;
 
 import com.ajaksmaniac.streamify.dto.VideoDetailsDto;
+import com.ajaksmaniac.streamify.service.ChannelService;
 import com.ajaksmaniac.streamify.service.VideoService;
 import lombok.AllArgsConstructor;
 
@@ -27,20 +28,22 @@ public class VideoController {
     @Qualifier(value = "videoServiceImplementation")
     private VideoService videoService;
 
-    @PostMapping()
-    public ResponseEntity<String> saveVideo(@RequestParam("file") MultipartFile file, @RequestParam("name") String name, @RequestParam("channelName") String channelName,  @RequestParam("description") String description) throws IOException {
 
-        videoService.saveVideo(file, name, channelName,description);
-        return ResponseEntity.ok("Video saved successfully.");
+
+    @PostMapping()
+    public ResponseEntity<VideoDetailsDto> saveVideo(@RequestParam("file") MultipartFile file, @RequestParam("name") String name, @RequestParam("channelId") Long channelId,  @RequestParam("description") String description) throws IOException {
+
+
+        return ResponseEntity.ok(videoService.saveVideo(file, name, channelId,description));
 
 
     }
 
     @PutMapping("/id/{id}")
-    public ResponseEntity<String> update(@PathVariable("id") Long id,@RequestParam("name") String name,  @RequestParam("description") String description) throws IOException {
+    public ResponseEntity<VideoDetailsDto> update(@PathVariable("id") Long id,@RequestParam("name") String name,  @RequestParam("description") String description,@RequestParam(value = "file",required = false) MultipartFile file) throws IOException {
 
-        videoService.updateVideo(id, name,description);
-        return ResponseEntity.ok("Video Updated successfully.");
+
+        return ResponseEntity.ok( videoService.updateVideo(id, name,description,file));
 
 
     }
@@ -58,16 +61,11 @@ public class VideoController {
         }catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
-
-
-
     }
 
     @GetMapping("/details/id/{id}")
     public ResponseEntity<VideoDetailsDto> getVideoDetailsById(@PathVariable("id") Long id) {
         return ResponseEntity.ok(videoService.getVideoDetails(id));
-
-
     }
 
     @GetMapping("/details")
@@ -78,9 +76,9 @@ public class VideoController {
 
     }
 
-    @GetMapping("all")
-    public ResponseEntity<List<String>> getAllVideoNames() {
-        return ResponseEntity.ok(videoService.getAllVideoNames());
+    @GetMapping("/search")
+    public ResponseEntity<List<VideoDetailsDto>> search(@RequestParam("keywords") String keywords) {
+        return ResponseEntity.ok(videoService.search(keywords));
     }
 
     @DeleteMapping("/id/{id}")

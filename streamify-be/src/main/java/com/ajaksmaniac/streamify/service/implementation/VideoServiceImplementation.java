@@ -6,17 +6,16 @@ import com.ajaksmaniac.streamify.entity.UserEntity;
 import com.ajaksmaniac.streamify.entity.VideoDetailsEntity;
 import com.ajaksmaniac.streamify.exception.channel.ChannelNotFoundException;
 import com.ajaksmaniac.streamify.exception.user.UserNotContentCreatorException;
-import com.ajaksmaniac.streamify.exception.user.VideoAlreadyExistsException;
-import com.ajaksmaniac.streamify.exception.user.VideoNotFoundException;
+import com.ajaksmaniac.streamify.exception.video.VideoAlreadyExistsException;
+import com.ajaksmaniac.streamify.exception.video.VideoNotFoundException;
 import com.ajaksmaniac.streamify.exception.video.UserNotPermittedToDeleteVideoException;
 import com.ajaksmaniac.streamify.exception.video.UserNotPermittedToUpdateVideoException;
 import com.ajaksmaniac.streamify.exception.video.UserNotPermittedToUploadVideoException;
+import com.ajaksmaniac.streamify.mapper.VideoDetailsMapper;
 import com.ajaksmaniac.streamify.repository.ChannelRepository;
-import com.ajaksmaniac.streamify.repository.CommentRepository;
-import com.ajaksmaniac.streamify.repository.UserRepository;
 import com.ajaksmaniac.streamify.repository.VideoRepository;
 import com.ajaksmaniac.streamify.service.VideoService;
-import com.ajaksmaniac.streamify.util.FileUtil;
+import com.ajaksmaniac.streamify.util.VideoUtilService;
 import com.ajaksmaniac.streamify.util.UserUtil;
 import lombok.AllArgsConstructor;
 
@@ -25,14 +24,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @Service
@@ -43,14 +40,13 @@ public class VideoServiceImplementation implements VideoService {
     @Autowired
     private VideoRepository videoRepository;
     @Autowired
-    private CommentRepository commentRepository;
-    @Autowired
     private ChannelRepository channelRepository;
 
     @Autowired
+    private VideoDetailsMapper mapper;
+
+    @Autowired
     UserUtil userUtil;
-
-
 
 
     @Override
@@ -59,7 +55,7 @@ public class VideoServiceImplementation implements VideoService {
         if (!videoRepository.existsById(id)) {
             throw new VideoNotFoundException();
         }
-        return new FileUtil().getFileAsResource(id.toString());
+        return new VideoUtilService().getFileAsResource(id.toString());
 
     }
 
@@ -70,49 +66,35 @@ public class VideoServiceImplementation implements VideoService {
             throw new VideoNotFoundException();
         }
 
-        VideoDetailsEntity videoDetailsEntity = videoRepository.findById(id).get();
+        VideoDetailsEntity en = videoRepository.findById(id).get();
 
-        VideoDetailsDto dto = new VideoDetailsDto(videoDetailsEntity.getId(), videoDetailsEntity.getName(), videoDetailsEntity.getChannel().getChannelName(), "/video/id/" + videoDetailsEntity.getId());
-        return dto;
+        return mapper.convertToDto(en);
     }
 
     @Override
     public List<VideoDetailsDto> getAllVideosDetails() {
 
-        List<VideoDetailsDto> list = new ArrayList<>();
-
-        videoRepository.getAllVideos().stream().forEach(v -> {
-            list.add(new VideoDetailsDto(v.getId(), v.getName(), v.getChannel().getChannelName(), "/video/id/" + v.getId()));
-        });
-
-        return list;
+        return mapper.convertListToDTO(videoRepository.getAllVideos());
     }
 
     @Override
-    public void saveVideo(MultipartFile file, String name, String channelName, String description) throws IOException {
+    public VideoDetailsDto saveVideo(MultipartFile file, String name, Long channelId, String description) throws IOException {
+        if (!channelRepository.existsById(channelId)) {
+            throw new ChannelNotFoundException();
+        }
 
         if (!userUtil.isUserAdmin(sessionUser())) {
             if (!userUtil.isUserContentCreator(sessionUser()))
                 throw new UserNotContentCreatorException();
-            List<ChannelEntity> channels = channelRepository.findByUserId(sessionUser().getId());
-            AtomicBoolean flag = new AtomicBoolean(false);
-            channels.forEach(c -> {
-                if (c.getChannelName().equals(channelName)) {
-                    flag.set(true);
-                }
-            });
-            if (!flag.get()) throw new UserNotPermittedToUploadVideoException();
+
+            if (!channelRepository.isChannelOwnedByUser(channelId,sessionUser())) throw new UserNotPermittedToUploadVideoException();
         }
 
         if (videoRepository.existsByName(name)) {
             throw new VideoAlreadyExistsException();
         }
 
-        if (!channelRepository.existsByChannelName(channelName)) {
-            throw new ChannelNotFoundException();
-        }
-
-        ChannelEntity channel = channelRepository.findByChannelName(channelName.toLowerCase());
+        ChannelEntity channel = channelRepository.findById(channelId).get();
 
         LocalDateTime now = LocalDateTime.now();
         LocalDate date = now.toLocalDate();
@@ -122,75 +104,85 @@ public class VideoServiceImplementation implements VideoService {
         saved.setDescription(description);
         saved.setPostedAt(java.sql.Date.valueOf(date));
 
-        FileUtil.saveFile(saved.getId().toString(), name, file);
+        VideoUtilService.saveFile(saved.getId().toString(), name, file);
 
-        videoRepository.save(saved);
+        return mapper.convertToDto(videoRepository.save(saved));
     }
 
     @Override
-    public List<String> getAllVideoNames() {
-        return videoRepository.getAllEntryNames();
-    }
-
-    @Override
-//    @Transactional
     public void deleteVideo(Long id) throws IOException {
         if (!videoRepository.existsById(id)) {
             throw new VideoNotFoundException();
         }
-        VideoDetailsEntity video = videoRepository.findById(id).get();
 
         if (!userUtil.isUserAdmin(sessionUser())) {
             if (!userUtil.isUserContentCreator(sessionUser()))
                 throw new UserNotContentCreatorException();
-            List<ChannelEntity> channels = channelRepository.findByUserId(sessionUser().getId());
-            AtomicBoolean flag = new AtomicBoolean(false);
-            channels.forEach(c -> {
-                if (video.getChannel().getId() == c.getId()) {
-                    flag.set(true);
-                }
-            });
-            if (!flag.get()) throw new UserNotPermittedToDeleteVideoException();
+
+            if (!videoRepository.isVideoOwnedByUser(id,sessionUser().getId())) throw new UserNotPermittedToDeleteVideoException();
         }
 
-        new FileUtil().deleteFile(id.toString());
+        new VideoUtilService().deleteFile(id.toString());
 
         videoRepository.deleteById(id);
 
     }
 
     @Override
-    public void updateVideo(Long id, String name, String description) {
+    public VideoDetailsDto updateVideo(Long id, String name, String description, MultipartFile file) throws IOException {
 
         if (!videoRepository.existsById(id)) {
             throw new VideoNotFoundException();
         }
 
-        VideoDetailsEntity video = videoRepository.findById(id).get();
         if (!userUtil.isUserAdmin(sessionUser())) {
             if (!userUtil.isUserContentCreator(sessionUser()))
                 throw new UserNotContentCreatorException();
-            List<ChannelEntity> channels = channelRepository.findByUserId(sessionUser().getId());
-            AtomicBoolean flag = new AtomicBoolean(false);
-            channels.forEach(c -> {
-                if (video.getChannel().getId() == c.getId()) {
-                    flag.set(true);
-                }
-            });
-            if (!flag.get()) throw new UserNotPermittedToUpdateVideoException();
+            if (!videoRepository.isVideoOwnedByUser(id,sessionUser().getId())) throw new UserNotPermittedToUpdateVideoException();
         }
 
-
-        if (videoRepository.existsByName(name)) {
-            throw new VideoAlreadyExistsException();
-        }
 
         VideoDetailsEntity entity = videoRepository.findById(id).get();
 
-        entity.setName(name);
-        entity.setDescription(description);
+        if(!name.equals(entity.getName())){
+            if (videoRepository.existsByName(name)) {
+                throw new VideoAlreadyExistsException();
+            }
+            entity.setName(name);
+            videoRepository.save(entity);
+        }
+        if(!description.equals(entity.getDescription())){
 
-        videoRepository.save(entity);
+            entity.setDescription(description);
+            videoRepository.save(entity);
+
+        }
+
+
+        if(file != null){
+            VideoUtilService.updateVideo(id.toString(), name,file);
+
+        }else{
+            VideoUtilService.updateVideo(id.toString(), name);
+
+        }
+        return mapper.convertToDto(entity);
+    }
+
+    @Override
+    public List<VideoDetailsDto> search(String keywords) {
+//        log.info(videoRepository.search(keywords).toString());
+         Map videoMap = new HashMap<Long, VideoDetailsEntity>();
+        List<String> keywordsList = Arrays.stream(keywords.split(" ")).toList();
+        keywordsList.forEach(kw ->{
+            videoRepository.search(kw).forEach(v->{
+                if(!videoMap.containsKey(v.getId())){
+                    videoMap.put(v.getId(),v);
+                }
+            });
+        });
+
+        return mapper.convertListToDTO(videoMap.values().stream().toList());
     }
 
     private UserEntity sessionUser() {

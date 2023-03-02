@@ -64,10 +64,5 @@ public class UserManager implements UserDetailsManager {
                 new UsernameNotFoundException(MessageFormat.format("username {0} not found", username)));
     }
 
-    public UserDetails getUserById(Long id) throws UserNotExistantException {
-        return userRepository.findById(id).orElseThrow(() ->
-                new UsernameNotFoundException(MessageFormat.format("User with id {0} not found", id)));
-    }
-
 
 }

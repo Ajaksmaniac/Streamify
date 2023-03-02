@@ -19,7 +19,7 @@ public class CommentMapper {
     public CommentDto convertToDto(CommentEntity entity) {
 
         CommentDto dto = mapper.map(entity, CommentDto.class);
-        dto.setUsername(entity.getUser().getUsername());
+        dto.setUserId(entity.getUser().getId());
         dto.setCommented_at(Date.valueOf(entity.getCommentedAt().toLocalDate()));
         return dto;
     }

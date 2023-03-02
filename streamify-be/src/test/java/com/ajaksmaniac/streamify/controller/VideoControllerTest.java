@@ -83,7 +83,7 @@ public class VideoControllerTest {
         VideoDetailsDto videoDetailsDto = new VideoDetailsDto();
         videoDetailsDto.setId(id);
         videoDetailsDto.setName(VIDEO_NAME);
-        videoDetailsDto.setChannel(CHANNEL);
+        videoDetailsDto.setChannelId(1L);
         videoDetailsDto.setUrl("/video/id/1");
 
         when(videoService.getVideoDetails(id)).thenReturn(videoDetailsDto);

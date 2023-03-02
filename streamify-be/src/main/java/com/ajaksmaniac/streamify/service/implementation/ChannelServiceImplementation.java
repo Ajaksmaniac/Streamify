@@ -2,7 +2,6 @@ package com.ajaksmaniac.streamify.service.implementation;
 
 
 import com.ajaksmaniac.streamify.dto.ChannelDto;
-import com.ajaksmaniac.streamify.dto.ChannelOnlyDto;
 import com.ajaksmaniac.streamify.dto.VideoDetailsDto;
 import com.ajaksmaniac.streamify.entity.*;
 import com.ajaksmaniac.streamify.exception.channel.*;
@@ -36,15 +35,6 @@ public class ChannelServiceImplementation implements ChannelService {
     private UserRepository userRepository;
 
     @Autowired
-    private RoleRepository roleRepository;
-
-    @Autowired
-    private VideoRepository videoRepository;
-
-    @Autowired
-    private VideoDetailsMapper videoDetailsMapper;
-
-    @Autowired
     private ChannelMapper channelMapper;
 
     @Autowired
@@ -57,14 +47,12 @@ public class ChannelServiceImplementation implements ChannelService {
             throw new ChannelNotFoundException();
         }
         ChannelEntity en = channelRepository.getChannelById(channelId);
-        List<VideoDetailsDto> videos = videoDetailsMapper.convertListToDTO(videoRepository.findByChannelId(channelId));
 
-
-        return new ChannelDto(en.getId(), en.getChannelName(),en.getUser().getUsername(),videos);
+        return channelMapper.convertToDto(en);
     }
 
     @Override
-    public void createChannel(ChannelOnlyDto channelDto) {
+    public ChannelDto createChannel(ChannelDto channelDto) {
 
         if(channelRepository.existsByChannelName(channelDto.getChannelName())){
             throw new ChannelAlreadyExistsException();
@@ -83,12 +71,12 @@ public class ChannelServiceImplementation implements ChannelService {
         }
 
         ChannelEntity en = new ChannelEntity(null,channelDto.getChannelName(),chanelOwner.get(), null);
-        channelRepository.save(en);
+        return channelMapper.convertToDto(channelRepository.save(en));
 
     }
 
     @Override
-    public void updateChannel(ChannelOnlyDto channelDto) {
+    public ChannelDto updateChannel(ChannelDto channelDto) {
         if(!channelRepository.existsById(channelDto.getId())){
             throw new ChannelNotFoundException();
         }
@@ -114,7 +102,7 @@ public class ChannelServiceImplementation implements ChannelService {
 
         entity.setChannelName(channelDto.getChannelName());
 
-        channelRepository.save(entity);
+        return channelMapper.convertToDto(channelRepository.save(entity));
     }
 
     @Override
@@ -137,8 +125,8 @@ public class ChannelServiceImplementation implements ChannelService {
     }
 
     @Override
-    public List<ChannelOnlyDto> getAllChannels() {
-        return channelMapper.convertListToChannelOnlyDTO(channelRepository.findAll());
+    public List<ChannelDto> getAllChannels() {
+        return channelMapper.convertListToDTO(channelRepository.findAll());
     }
 
     private UserEntity sessionUser() {

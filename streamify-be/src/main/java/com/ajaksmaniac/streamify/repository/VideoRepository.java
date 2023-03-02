@@ -12,27 +12,25 @@ import java.util.List;
 @Repository
 public interface VideoRepository extends JpaRepository<VideoDetailsEntity,Long> {
 
-    VideoDetailsEntity findByName(String name);
     boolean existsByName(String name);
-//    @Query(nativeQuery = true,value = "SELECT * FROM video_details v where v.id = :id")
-//    VideoDetailsEntity findByVideoId(@Param("id") Long id);
+
     boolean existsById(Long id );
-
-    List<VideoDetailsEntity> findByChannelId(@Param("id") Long id);
-
-
-    @Query(nativeQuery = true,value = "SELECT name FROM video_details")
-    List<String> getAllEntryNames();
 
     @Query(nativeQuery = true,value = "SELECT * FROM video_details")
     List<VideoDetailsEntity> getAllVideos();
 
-    void deleteAllVideosDetailsByChannelId(Long id);
 
     @Query("SELECT CASE WHEN COUNT(v) > 0 THEN true ELSE false END " +
             "FROM VideoDetailsEntity v " +
             "WHERE v.id = :videoId AND v.channel.user.id = :userId")
     boolean isVideoOwnedByUser(@Param("videoId") Long videoId,@Param("userId") Long userId);
+
+    @Query(value = "SELECT v.video_id, v.name,v.channel_id,v.description, v.posted_at, v.video_url\n"+
+    "FROM video_details v\n"+
+    "WHERE LOWER(v.name) LIKE LOWER(concat('%', :keywords, '%'))\n"+
+    "OR LOWER(v.description) LIKE LOWER(concat('%', :keywords, '%'))", nativeQuery = true)
+    List<VideoDetailsEntity> search(@Param("keywords") String keywords);
+
 
 
 }
