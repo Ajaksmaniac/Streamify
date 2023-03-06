@@ -1,8 +1,10 @@
 package com.ajaksmaniac.streamify.exception.channel;
 
-import org.springframework.web.bind.annotation.ResponseStatus;
+import com.ajaksmaniac.streamify.exception.CustomException;
 
 
-@ResponseStatus
-public class UserNotPermittedToDeleteChannelForOthersException extends RuntimeException{
+public class UserNotPermittedToDeleteChannelForOthersException extends CustomException {
+    public UserNotPermittedToDeleteChannelForOthersException(Long id) {
+        super(id);
+    }
 }

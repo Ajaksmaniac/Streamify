@@ -16,7 +16,7 @@ public interface ChannelRepository extends JpaRepository<ChannelEntity, Long> {
 
     boolean existsByChannelName(String name);
 
-    ChannelEntity getChannelById(Long id);
+    Optional<ChannelEntity> getChannelById(Long id);
 
     List<ChannelEntity> findByUserId(Long id);
 

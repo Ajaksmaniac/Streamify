@@ -1,8 +1,9 @@
 package com.ajaksmaniac.streamify.exception.video;
 
 
-import org.springframework.web.bind.annotation.ResponseStatus;
-
-@ResponseStatus
-public class UserNotPermittedToDeleteVideoException extends RuntimeException{
+import com.ajaksmaniac.streamify.exception.CustomException;
+public class UserNotPermittedToDeleteVideoException extends CustomException {
+    public UserNotPermittedToDeleteVideoException(Long id) {
+        super(id);
+    }
 }

@@ -1,8 +1,11 @@
 package com.ajaksmaniac.streamify.exception.user;
 
 
-import org.springframework.web.bind.annotation.ResponseStatus;
+import com.ajaksmaniac.streamify.exception.CustomException;
 
-@ResponseStatus
-public class UserNotContentCreatorException extends RuntimeException{
+public class UserNotContentCreatorException extends CustomException {
+
+    public UserNotContentCreatorException(Long id) {
+        super(id);
+    }
 }

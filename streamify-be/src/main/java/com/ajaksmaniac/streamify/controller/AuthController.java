@@ -40,10 +40,7 @@ public class AuthController {
     public ResponseEntity register(@RequestBody SignupDto signupDTO) {
 
         UserEntity user = new UserEntity(signupDTO.getUsername(), signupDTO.getPassword());
-
-        if (userDetailsManager.userExists(user.getUsername())) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User already exists");
-        }
+        
         userDetailsManager.createUser(user);
         Authentication authentication = UsernamePasswordAuthenticationToken.authenticated(user, signupDTO.getPassword(), Collections.EMPTY_LIST);
         return ResponseEntity.ok(tokenGenerator.createToken(authentication));

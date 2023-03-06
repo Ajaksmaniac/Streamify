@@ -39,7 +39,7 @@ public class ChannelController {
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteChannelById(@PathVariable("id") Long id) {
             channelService.deleteById(id);
-            return ResponseEntity.ok("Channel Deleted");
+            return ResponseEntity.ok(String.format("Channel with id %d successfully deleted", id));
 
     }
 

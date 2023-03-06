@@ -84,6 +84,6 @@ public class VideoController {
     @DeleteMapping("/id/{id}")
     public ResponseEntity<String> deleteVideo(@PathVariable("id") Long id) throws IOException {
         videoService.deleteVideo(id);
-        return ResponseEntity.ok("Video Deleted");
+        return ResponseEntity.ok(String.format("Video with id %d successfully deleted",id));
     }
 }

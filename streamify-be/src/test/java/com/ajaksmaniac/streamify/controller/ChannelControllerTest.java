@@ -57,7 +57,7 @@ public class ChannelControllerTest {
         when(userRepository.existsByUsername("test")).thenReturn(true);
         when(userRepository.findByUsername("test")).thenReturn(Optional.of(userEntity));
 
-        when(channelRepository.getChannelById(id)).thenReturn(channelEntity);
+        when(channelRepository.getChannelById(id)).thenReturn(Optional.ofNullable(channelEntity));
         when(channelService.getChannelById(id)).thenReturn(new ChannelDto(1L,"test","testChannel"));
 
         // act

@@ -10,7 +10,6 @@ public interface CommentService {
 
     CommentDto saveComment(CommentDto comment);
 
-    CommentDto updateComment(CommentDto comment);
     List<CommentDto> getCommentsForVideo(Long videoId);
     void deleteById(Long id);
 

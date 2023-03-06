@@ -53,7 +53,7 @@ public class VideoServiceImplementation implements VideoService {
     public Resource getVideo(Long id) throws IOException {
 
         if (!videoRepository.existsById(id)) {
-            throw new VideoNotFoundException();
+            throw new VideoNotFoundException(id);
         }
         return new VideoUtilService().getFileAsResource(id.toString());
 
@@ -63,7 +63,7 @@ public class VideoServiceImplementation implements VideoService {
     public VideoDetailsDto getVideoDetails(Long id) {
 
         if (!videoRepository.existsById(id)) {
-            throw new VideoNotFoundException();
+            throw new VideoNotFoundException(id);
         }
 
         VideoDetailsEntity en = videoRepository.findById(id).get();
@@ -80,46 +80,42 @@ public class VideoServiceImplementation implements VideoService {
     @Override
     public VideoDetailsDto saveVideo(MultipartFile file, String name, Long channelId, String description) throws IOException {
         if (!channelRepository.existsById(channelId)) {
-            throw new ChannelNotFoundException();
+            throw new ChannelNotFoundException(channelId);
         }
 
         if (!userUtil.isUserAdmin(sessionUser())) {
             if (!userUtil.isUserContentCreator(sessionUser()))
-                throw new UserNotContentCreatorException();
+                throw new UserNotContentCreatorException(sessionUser().getId());
 
-            if (!channelRepository.isChannelOwnedByUser(channelId,sessionUser())) throw new UserNotPermittedToUploadVideoException();
+            if (!channelRepository.isChannelOwnedByUser(channelId,sessionUser())) throw new UserNotPermittedToUploadVideoException(sessionUser().getId());
         }
 
         if (videoRepository.existsByName(name)) {
-            throw new VideoAlreadyExistsException();
+            throw new VideoAlreadyExistsException(name);
         }
 
-        ChannelEntity channel = channelRepository.findById(channelId).get();
 
         LocalDateTime now = LocalDateTime.now();
         LocalDate date = now.toLocalDate();
-        VideoDetailsEntity newVideoDetailsEntity = new VideoDetailsEntity(name, channel, java.sql.Date.valueOf(date), description);
-        VideoDetailsEntity saved = videoRepository.save(newVideoDetailsEntity);
-        saved.setVideoUrl("/video/id/" + saved.getId());
-        saved.setDescription(description);
-        saved.setPostedAt(java.sql.Date.valueOf(date));
+        VideoDetailsEntity newVideoDetailsEntity = new VideoDetailsEntity(name, new ChannelEntity(channelId), java.sql.Date.valueOf(date), description);
 
+        VideoDetailsEntity saved = videoRepository.save(newVideoDetailsEntity);
         VideoUtilService.saveFile(saved.getId().toString(), name, file);
 
-        return mapper.convertToDto(videoRepository.save(saved));
+        return mapper.convertToDto(saved);
     }
 
     @Override
     public void deleteVideo(Long id) throws IOException {
         if (!videoRepository.existsById(id)) {
-            throw new VideoNotFoundException();
+            throw new VideoNotFoundException(id);
         }
 
         if (!userUtil.isUserAdmin(sessionUser())) {
             if (!userUtil.isUserContentCreator(sessionUser()))
-                throw new UserNotContentCreatorException();
+                throw new UserNotContentCreatorException(sessionUser().getId());
 
-            if (!videoRepository.isVideoOwnedByUser(id,sessionUser().getId())) throw new UserNotPermittedToDeleteVideoException();
+            if (!videoRepository.isVideoOwnedByUser(id,sessionUser().getId())) throw new UserNotPermittedToDeleteVideoException(sessionUser().getId());
         }
 
         new VideoUtilService().deleteFile(id.toString());
@@ -132,13 +128,13 @@ public class VideoServiceImplementation implements VideoService {
     public VideoDetailsDto updateVideo(Long id, String name, String description, MultipartFile file) throws IOException {
 
         if (!videoRepository.existsById(id)) {
-            throw new VideoNotFoundException();
+            throw new VideoNotFoundException(id);
         }
 
         if (!userUtil.isUserAdmin(sessionUser())) {
             if (!userUtil.isUserContentCreator(sessionUser()))
-                throw new UserNotContentCreatorException();
-            if (!videoRepository.isVideoOwnedByUser(id,sessionUser().getId())) throw new UserNotPermittedToUpdateVideoException();
+                throw new UserNotContentCreatorException(sessionUser().getId());
+            if (!videoRepository.isVideoOwnedByUser(id,sessionUser().getId())) throw new UserNotPermittedToUpdateVideoException(sessionUser().getId());
         }
 
 
@@ -146,7 +142,7 @@ public class VideoServiceImplementation implements VideoService {
 
         if(!name.equals(entity.getName())){
             if (videoRepository.existsByName(name)) {
-                throw new VideoAlreadyExistsException();
+                throw new VideoAlreadyExistsException(name);
             }
             entity.setName(name);
             videoRepository.save(entity);

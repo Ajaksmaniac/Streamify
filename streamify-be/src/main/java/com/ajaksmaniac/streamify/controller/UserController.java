@@ -33,7 +33,7 @@ public class UserController {
 
         userDetailsManager.updateUser(userEntity);
 
-        return ResponseEntity.ok("Password changed");
+        return ResponseEntity.ok(String.format("Password changed for user with id %d ",((UserEntity) userEntity).getId()));
 
 
     }

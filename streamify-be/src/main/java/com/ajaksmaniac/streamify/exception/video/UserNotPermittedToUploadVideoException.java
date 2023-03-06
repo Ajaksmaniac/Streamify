@@ -1,8 +1,10 @@
 package com.ajaksmaniac.streamify.exception.video;
 
 
-import org.springframework.web.bind.annotation.ResponseStatus;
+import com.ajaksmaniac.streamify.exception.CustomException;
 
-@ResponseStatus
-public class UserNotPermittedToUploadVideoException extends RuntimeException{
+public class UserNotPermittedToUploadVideoException extends CustomException {
+    public UserNotPermittedToUploadVideoException(Long id) {
+        super(id);
+    }
 }

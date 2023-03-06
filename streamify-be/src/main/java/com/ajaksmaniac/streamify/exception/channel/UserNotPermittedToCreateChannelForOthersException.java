@@ -1,9 +1,9 @@
 package com.ajaksmaniac.streamify.exception.channel;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import com.ajaksmaniac.streamify.exception.CustomException;
 
-
-@ResponseStatus
-public class UserNotPermittedToCreateChannelForOthersException extends RuntimeException{
+public class UserNotPermittedToCreateChannelForOthersException extends CustomException {
+    public UserNotPermittedToCreateChannelForOthersException(Long id) {
+        super(id);
+    }
 }

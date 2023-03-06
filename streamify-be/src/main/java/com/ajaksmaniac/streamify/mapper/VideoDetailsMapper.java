@@ -17,10 +17,7 @@ public class VideoDetailsMapper {
     public VideoDetailsDto convertToDto(VideoDetailsEntity entity) {
 
         VideoDetailsDto dto =mapper.map(entity, VideoDetailsDto.class);
-//        if(entity.getChannel() != null){
-//            dto.setChannelId(entity.getChannel().getId());
-//        }
-
+        dto.setUrl(String.format("/video/id/%s",entity.getId()));
         return dto;
 
     }

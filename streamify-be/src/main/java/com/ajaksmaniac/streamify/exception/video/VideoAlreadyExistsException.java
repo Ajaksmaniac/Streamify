@@ -1,8 +1,10 @@
 package com.ajaksmaniac.streamify.exception.video;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import com.ajaksmaniac.streamify.exception.CustomException;
 
-@ResponseStatus
-public class VideoAlreadyExistsException extends RuntimeException{
+public class VideoAlreadyExistsException extends CustomException {
+
+    public VideoAlreadyExistsException(String name) {
+        super(name);
+    }
 }

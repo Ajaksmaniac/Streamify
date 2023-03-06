@@ -1,8 +1,9 @@
 package com.ajaksmaniac.streamify.exception.video;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import com.ajaksmaniac.streamify.exception.CustomException;
 
-@ResponseStatus
-public class VideoNotFoundException extends RuntimeException{
+public class VideoNotFoundException extends CustomException {
+    public VideoNotFoundException(Long id) {
+        super(id);
+    }
 }

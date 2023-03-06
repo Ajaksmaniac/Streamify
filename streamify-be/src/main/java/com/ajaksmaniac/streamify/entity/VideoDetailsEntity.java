@@ -26,25 +26,31 @@ public class VideoDetailsEntity{
 
     private Date postedAt;
 
-    private String videoUrl;
-
     @OneToMany(cascade = CascadeType.ALL,mappedBy = "videoDetails",orphanRemoval = true)
     private List<CommentEntity> comments;
     @ManyToOne
-    @JoinColumn(name = "channel_id", nullable = false)
+    @JoinColumn(name = "channel_id", nullable = false )
     private ChannelEntity channel;
-    public VideoDetailsEntity(String name, ChannelEntity channel, Date postedAt, String description) {
+
+
+
+    public VideoDetailsEntity(String name,ChannelEntity channel, Date postedAt, String description) {
         this.name = name;
         this.channel = channel;
+        this.postedAt = postedAt;
+        this.description = description;
     }
 
-    public VideoDetailsEntity(Long id,String name, ChannelEntity channel, String description,Date postedAt,String videoUrl) {
+    public VideoDetailsEntity(Long id) {
+        this.id = id;
+    }
+
+    public VideoDetailsEntity(Long id, String name, ChannelEntity channel, String description, Date postedAt) {
         this.id = id;
         this.channel = channel;
         this.name = name;
         this.postedAt = postedAt;
         this.description = description;
-        this.videoUrl = videoUrl;
 
     }
 

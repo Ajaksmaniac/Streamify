@@ -43,7 +43,7 @@ public class CommentServiceImplementation implements CommentService {
     @Override
     public CommentDto getComment(Long id) {
         if (!commentRepository.existsById(id)) {
-            throw new CommentNotFoundException();
+            throw new CommentNotFoundException(id);
         }
         CommentEntity en = commentRepository.findByCommentId(id);
 
@@ -54,44 +54,36 @@ public class CommentServiceImplementation implements CommentService {
     @Override
     public CommentDto saveComment(CommentDto comment) {
         if (!videoRepository.existsById((comment.getVideoId()))) {
-            throw new VideoNotFoundException();
+            throw new VideoNotFoundException(comment.getVideoId());
         }
 
         LocalDateTime now = LocalDateTime.now();
         LocalDate date = now.toLocalDate();
-
-        VideoDetailsEntity video = videoRepository.findById(comment.getVideoId()).get();
 
         CommentEntity entity = mapper.convertToEntity(comment);
         entity.setCommentedAt(java.sql.Date.valueOf(date));
 
 
         entity.setUser(sessionUser());
-        entity.setVideoDetails(video);
+        entity.setVideoDetails(new VideoDetailsEntity(comment.getVideoId()));
 
         return mapper.convertToDto(commentRepository.save(entity));
     }
 
     @Override
-    public CommentDto updateComment(CommentDto comment) {
-        return null;
-    }
-
-    @Override
     public List<CommentDto> getCommentsForVideo(Long videoId) {
         if (!videoRepository.existsById(videoId)) {
-            throw new VideoNotFoundException();
+            throw new VideoNotFoundException(videoId);
         }
 
-        List<CommentDto> list = commentRepository.findByMovieId(videoId).stream().map(o -> mapper.convertToDto(o)).collect(Collectors.toList());
-        return list;
+        return commentRepository.findByMovieId(videoId).stream().map(o -> mapper.convertToDto(o)).collect(Collectors.toList());
     }
 
 
     @Override
     public void deleteById(Long id) {
         if (!commentRepository.existsById(id)) {
-            throw new CommentNotFoundException();
+            throw new CommentNotFoundException(id);
         }
         CommentEntity comment = commentRepository.getById(id);
         if (!userUtil.isUserAdmin(sessionUser())) {
@@ -100,7 +92,7 @@ public class CommentServiceImplementation implements CommentService {
             if(!comment.getUser().getId().equals(sessionUser().getId())){
                 //is User owner of the video
                 if (!videoRepository.isVideoOwnedByUser(comment.getVideoDetails().getId(), sessionUser().getId())) {
-                    throw new UserNotPermittedToDeleteOthersCommentsException();
+                    throw new UserNotPermittedToDeleteOthersCommentsException(sessionUser().getId());
 
                 }
             }

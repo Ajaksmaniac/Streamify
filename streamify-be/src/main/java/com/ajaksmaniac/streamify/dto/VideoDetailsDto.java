@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 
 @JsonSerialize
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
 public class VideoDetailsDto {
     private Long id;
@@ -20,4 +19,10 @@ public class VideoDetailsDto {
     private String url;
     private String description;
 
+    public VideoDetailsDto(Long id, String name, Long channelId, String description) {
+        this.id = id;
+        this.name = name;
+        this.channelId = channelId;
+        this.description = description;
+    }
 }
