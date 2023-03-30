@@ -16,6 +16,7 @@ import java.util.List;
 @AllArgsConstructor
 @RestController
 @RequestMapping("/channel")
+@CrossOrigin
 public class ChannelController {
 
     @Autowired

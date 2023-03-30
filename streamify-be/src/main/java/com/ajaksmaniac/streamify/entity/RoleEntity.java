@@ -21,4 +21,9 @@ public class RoleEntity {
 
     @Column(unique = true)
     private String name;
+
+    public RoleEntity(Long id) {
+        this.id = id;
+    }
+
 }

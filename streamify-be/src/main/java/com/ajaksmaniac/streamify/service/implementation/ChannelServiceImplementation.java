@@ -71,32 +71,34 @@ public class ChannelServiceImplementation implements ChannelService {
 
     @Override
     public ChannelDto updateChannel(ChannelDto channelDto) {
-        if(!channelRepository.existsById(channelDto.getId())){
+        Optional<ChannelEntity> entity = channelRepository.findById(channelDto.getId());
+
+        if(entity.isEmpty()){
             throw new ChannelNotFoundException(channelDto.getId());
         }
 
-        ChannelEntity entity = channelRepository.getById(channelDto.getId());
+
         if (!userUtil.isUserAdmin(sessionUser())) {
             if(!userUtil.isUserContentCreator(sessionUser())) throw new UserNotContentCreatorException(sessionUser().getId());
-            if(!entity.getUser().getUsername().equals(sessionUser().getUsername())) throw new UserNotPermittedToUpdateChannelForOthersException(sessionUser().getId());
+            if(!entity.get().getUser().getUsername().equals(sessionUser().getUsername())) throw new UserNotPermittedToUpdateChannelForOthersException(sessionUser().getId());
 
         }else{
             //Only Admin can change channel owners
             if(!userRepository.existsByUsername(channelDto.getUsername())) throw new UserNotExistentException(channelDto.getUsername());
             UserEntity userEntity = userRepository.findByUsername(channelDto.getUsername()).get();
             if(!sessionUser().getUsername().equals(channelDto.getUsername()) && !userUtil.isUserContentCreator(userEntity)){
-                userEntity.setRole(new RoleEntity(2L,"content_creator"));
+                userEntity.setRole(new RoleEntity(2L));
             }
-            entity.setUser(userEntity);
+            entity.get().setUser(userEntity);
         }
 
         if(channelRepository.existsByChannelName(channelDto.getChannelName())){
             throw new ChannelAlreadyExistsException(channelDto.getChannelName());
         }
 
-        entity.setChannelName(channelDto.getChannelName());
+        entity.get().setChannelName(channelDto.getChannelName());
 
-        return channelMapper.convertToDto(channelRepository.save(entity));
+        return channelMapper.convertToDto(channelRepository.save(entity.get()));
     }
 
     @Override

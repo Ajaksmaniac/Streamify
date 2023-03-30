@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -42,13 +43,11 @@ public class CommentServiceImplementation implements CommentService {
 
     @Override
     public CommentDto getComment(Long id) {
-        if (!commentRepository.existsById(id)) {
+        Optional<CommentEntity> en = commentRepository.findByCommentId(id);
+        if (en.isEmpty()) {
             throw new CommentNotFoundException(id);
         }
-        CommentEntity en = commentRepository.findByCommentId(id);
-
-//        return new CommentDto(en.getId(), en.getContent(), en.getVideoDetails().getId(),en.getUser().getId());
-        return mapper.convertToDto(en);
+        return mapper.convertToDto(en.get());
     }
 
     @Override
@@ -82,16 +81,17 @@ public class CommentServiceImplementation implements CommentService {
 
     @Override
     public void deleteById(Long id) {
-        if (!commentRepository.existsById(id)) {
+        Optional<CommentEntity> en = commentRepository.findByCommentId(id);
+
+        if (en.isEmpty()) {
             throw new CommentNotFoundException(id);
         }
-        CommentEntity comment = commentRepository.getById(id);
         if (!userUtil.isUserAdmin(sessionUser())) {
 
             // Is user owner of the comment
-            if(!comment.getUser().getId().equals(sessionUser().getId())){
+            if(!en.get().getUser().getId().equals(sessionUser().getId())){
                 //is User owner of the video
-                if (!videoRepository.isVideoOwnedByUser(comment.getVideoDetails().getId(), sessionUser().getId())) {
+                if (!videoRepository.isVideoOwnedByUser(en.get().getVideoDetails().getId(), sessionUser().getId())) {
                     throw new UserNotPermittedToDeleteOthersCommentsException(sessionUser().getId());
 
                 }

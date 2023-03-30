@@ -126,8 +126,8 @@ public class VideoServiceImplementation implements VideoService {
 
     @Override
     public VideoDetailsDto updateVideo(Long id, String name, String description, MultipartFile file) throws IOException {
-
-        if (!videoRepository.existsById(id)) {
+        Optional<VideoDetailsEntity> entity = videoRepository.findById(id);
+        if (entity.isEmpty()) {
             throw new VideoNotFoundException(id);
         }
 
@@ -138,22 +138,15 @@ public class VideoServiceImplementation implements VideoService {
         }
 
 
-        VideoDetailsEntity entity = videoRepository.findById(id).get();
-
-        if(!name.equals(entity.getName())){
+        if(!name.equals(entity.get().getName())){
             if (videoRepository.existsByName(name)) {
                 throw new VideoAlreadyExistsException(name);
             }
-            entity.setName(name);
-            videoRepository.save(entity);
         }
-        if(!description.equals(entity.getDescription())){
+            entity.get().setName(name);
 
-            entity.setDescription(description);
-            videoRepository.save(entity);
-
-        }
-
+            entity.get().setDescription(description);
+            videoRepository.save(entity.get());
 
         if(file != null){
             VideoUtilService.updateVideo(id.toString(), name,file);
@@ -162,7 +155,7 @@ public class VideoServiceImplementation implements VideoService {
             VideoUtilService.updateVideo(id.toString(), name);
 
         }
-        return mapper.convertToDto(entity);
+        return mapper.convertToDto(entity.get());
     }
 
     @Override

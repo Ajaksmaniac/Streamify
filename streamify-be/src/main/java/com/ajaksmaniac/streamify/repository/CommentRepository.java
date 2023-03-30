@@ -9,11 +9,12 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface CommentRepository extends JpaRepository<CommentEntity, Long> {
     @Query(value = "SELECT * FROM comment c where c.id = :id", nativeQuery = true)
-    CommentEntity findByCommentId(@Param("id")Long id);
+    Optional<CommentEntity> findByCommentId(@Param("id")Long id);
     @Query(value = "SELECT * FROM comment c where c.video_id = :id", nativeQuery = true)
     List<CommentEntity> findByMovieId(@Param("id") Long id);
 
