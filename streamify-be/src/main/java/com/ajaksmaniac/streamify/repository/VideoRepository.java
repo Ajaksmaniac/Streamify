@@ -25,7 +25,7 @@ public interface VideoRepository extends JpaRepository<VideoDetailsEntity,Long> 
             "WHERE v.id = :videoId AND v.channel.user.id = :userId")
     boolean isVideoOwnedByUser(@Param("videoId") Long videoId,@Param("userId") Long userId);
 
-    @Query(value = "SELECT v.video_id, v.name,v.channel_id,v.description, v.posted_at, v.video_url\n"+
+    @Query(value = "SELECT v.video_id, v.name,v.channel_id,v.description, v.posted_at\n"+
     "FROM video_details v\n"+
     "WHERE LOWER(v.name) LIKE LOWER(concat('%', :keywords, '%'))\n"+
     "OR LOWER(v.description) LIKE LOWER(concat('%', :keywords, '%'))", nativeQuery = true)

@@ -14,6 +14,13 @@ export type HomePageProps = {
 export type Video = {
     id: number,
     name: string,
-    postedBy: string,
+    channelId: number,
+    channel: Channel,
     url:String
+}
+
+export type Channel = {
+    id: number,
+    username: string,
+    channelName: string
 }
