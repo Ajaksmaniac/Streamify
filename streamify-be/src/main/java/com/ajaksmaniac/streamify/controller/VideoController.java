@@ -67,6 +67,10 @@ public class VideoController {
     public ResponseEntity<VideoDetailsDto> getVideoDetailsById(@PathVariable("id") Long id) {
         return ResponseEntity.ok(videoService.getVideoDetails(id));
     }
+    @GetMapping("/channel/id/{id}")
+    public ResponseEntity<List<VideoDetailsDto>> getVideoDetailsByChannelId(@PathVariable("id") Long id) {
+        return ResponseEntity.ok(videoService.getAllVideosByChannel(id));
+    }
 
     @GetMapping("/details")
     public ResponseEntity<List<VideoDetailsDto>> getAllVideoDetails() {

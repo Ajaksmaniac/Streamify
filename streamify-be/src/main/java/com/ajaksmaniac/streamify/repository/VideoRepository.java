@@ -19,6 +19,9 @@ public interface VideoRepository extends JpaRepository<VideoDetailsEntity,Long> 
     @Query(nativeQuery = true,value = "SELECT * FROM video_details")
     List<VideoDetailsEntity> getAllVideos();
 
+    @Query(nativeQuery = true,value = "SELECT * FROM video_details v WHERE v.channel_id = :channelId")
+    List<VideoDetailsEntity> getVideosForChannel(@Param("channelId") Long channelId);
+
 
     @Query("SELECT CASE WHEN COUNT(v) > 0 THEN true ELSE false END " +
             "FROM VideoDetailsEntity v " +

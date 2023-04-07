@@ -3,6 +3,7 @@ package com.ajaksmaniac.streamify.service;
 import com.ajaksmaniac.streamify.entity.RoleEntity;
 import com.ajaksmaniac.streamify.entity.UserEntity;
 import com.ajaksmaniac.streamify.exception.user.UserAlreadyExistsException;
+import com.ajaksmaniac.streamify.exception.user.UserNotExistentException;
 import com.ajaksmaniac.streamify.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -66,6 +67,13 @@ public class UserManager implements UserDetailsManager {
         return userRepository.findByUsername(username).orElseThrow(() ->
                 new UsernameNotFoundException(MessageFormat.format("username {0} not found", username)));
     }
+
+    public UserEntity getUserById(Long id){
+
+        return userRepository.findById(id).orElseThrow(()->
+                new UserNotExistentException(String.valueOf(id)));
+    }
+
 
 
 }

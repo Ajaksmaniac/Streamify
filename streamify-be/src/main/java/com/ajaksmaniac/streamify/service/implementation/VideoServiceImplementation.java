@@ -174,6 +174,11 @@ public class VideoServiceImplementation implements VideoService {
         return mapper.convertListToDTO(videoMap.values().stream().toList());
     }
 
+    @Override
+    public List<VideoDetailsDto> getAllVideosByChannel(Long id) {
+        return mapper.convertListToDTO(videoRepository.getVideosForChannel(id));
+    }
+
     private UserEntity sessionUser() {
         return (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }

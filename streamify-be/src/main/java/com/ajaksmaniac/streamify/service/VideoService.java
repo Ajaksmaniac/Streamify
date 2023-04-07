@@ -24,4 +24,5 @@ public interface VideoService {
     VideoDetailsDto updateVideo(Long id, String name, String description, MultipartFile file) throws IOException;
 
     List<VideoDetailsDto> search(String keywords);
+    List<VideoDetailsDto> getAllVideosByChannel(Long id);
 }

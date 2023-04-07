@@ -144,7 +144,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(UserNotExistentException.class)
     ProblemDetail handleUserNotExistentException(UserNotExistentException e) throws URISyntaxException  {
-        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, String.format("User with username '%s' doesn't exist.", e.getName()));
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, String.format("User with username or id '%s' doesn't exist.", e.getName()));
         problemDetail.setTitle("User not found");
         problemDetail.setType(new URI("Not-Found"));
         return problemDetail;
