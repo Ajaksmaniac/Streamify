@@ -7,3 +7,7 @@ return axios.get(`${process.env.REACT_APP_BE_SERVER}${process.env.REACT_APP_GET_
 export const searchVideosByKeywords = (keywords: string)=>{
     return axios.get(`${process.env.REACT_APP_BE_SERVER}${process.env.REACT_APP_GET_VIDEO_SEARCH_ENDPOINT}`,{params:{keywords:keywords}})
 }
+
+export const searchGetVideosForChannel = (channelId: number)=>{
+    return axios.get(`${process.env.REACT_APP_BE_SERVER}${process.env.REACT_APP_GET_VIDEOS_FOR_CHANNEL_ENDPOINT}${channelId}`)
+}

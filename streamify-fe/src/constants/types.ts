@@ -15,7 +15,6 @@ export type Video = {
     id: number,
     name: string,
     channelId: number,
-    channel: Channel,
     url:String
 }
 
@@ -23,4 +22,22 @@ export type Channel = {
     id: number,
     username: string,
     channelName: string
+}
+
+export type Comment = {
+    id: number,
+    content: string,
+    videoId: number,
+    userId: number,
+    commented_at: Date
+}
+
+export type User = {
+    id:number,
+    username:string,
+    role: Role
+}
+export type Role = {
+    id:number,
+    name:string
 }

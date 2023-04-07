@@ -27,7 +27,7 @@ export default function NavigationBar(props:NavbarProps){
     return(
         <Navbar bg="dark" variant="dark" >
 
-            <img src='Logo.png' className='img-fluid shadow-4' alt='...' />
+            <img src={`${window.origin}/Logo.png`} className='img-fluid shadow-4' alt='...' />
 
             <Form action="/search"  className='mx-auto'>
                 <Row>
