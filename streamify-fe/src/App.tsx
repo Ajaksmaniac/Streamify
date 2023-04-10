@@ -7,6 +7,8 @@ import { HomePage } from './views/HomePage';
 import { SearchPage } from './views/SearchPage';
 import VideoPage from './views/VideoPage';
 import ChannelPage from './views/ChannelPage';
+import RegisterPage from './views/RegisterPage';
+import LoginPage from './views/LoginPage';
 
 function App() {
   return (
@@ -19,6 +21,10 @@ function App() {
               <Route path="/search" element={<SearchPage />} />
               <Route path="/video/:id" element={<VideoPage />} />
               <Route path="/channel/:id" element={<ChannelPage />} />
+              <Route path="/register" element={<RegisterPage />} />
+              <Route path="/login" element={<LoginPage />} />
+
+
             </Routes>
           </BrowserRouter>        
         <Footer/>

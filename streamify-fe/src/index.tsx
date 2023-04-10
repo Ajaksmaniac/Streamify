@@ -3,14 +3,21 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { ProvideAuth } from './hooks/useAuth';
+
 // require('dotenv').config()
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
+// const { user,addUser } = useAuth();
+
 root.render(
   <React.StrictMode>
-    <App />
+     <ProvideAuth><App /></ProvideAuth>
+      
+
+    
   </React.StrictMode>
 );
 

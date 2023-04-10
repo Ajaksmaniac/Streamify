@@ -1,14 +1,20 @@
 import { Navbar, Nav, Form, FormControl, Button, Row, FormGroup, Col, FormCheck } from 'react-bootstrap';
-import { Link, useSearchParams } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import {NavbarProps } from './../constants/types';
 import Image from 'react-bootstrap/Image'
 import { useEffect, useState } from 'react';
+import { useAuth } from '../hooks/useAuth';
 // import { URLSearchParams } from 'url';
 
 export default function NavigationBar(props:NavbarProps){
     // const [searchParams, setSearchParams] = useSearchParams();
+    const auth = useAuth();
+    console.log(auth.user())
+
+    const navigate = useNavigate();
+    const keywordsInitial = new URLSearchParams(window.location.search).get('keywords') as string | number | string[] | undefined
     const [disabled,setDisabled] = useState(false)
-    const [keywords,setKeywords] = useState(new URLSearchParams(window.location.search).get('keywords') as string | number | string[] | undefined);
+    const [keywords,setKeywords] = useState(keywordsInitial? keywordsInitial:'');
     const [searchVideos,setSearchVideos] = useState(new URLSearchParams(window.location.search).get('videos')?true:false);
 
     const [searchChannels,setSearchChannels] = useState(new URLSearchParams(window.location.search).get('channels')?true:false);
@@ -37,7 +43,7 @@ export default function NavigationBar(props:NavbarProps){
                     <Form.Group as={Col} >
                         <Form.Check 
                             type='checkbox'
-                            id='default-checkbox'
+                            // id='default-checkbox'
                             label='Videos'
                             className="text-primary"
                             name='videos'
@@ -46,7 +52,7 @@ export default function NavigationBar(props:NavbarProps){
                         />   
                         <Form.Check 
                             type='checkbox'
-                            id='default-checkbox'
+                            // id='default-checkbox'
                             label='Channels'
                             className="text-primary"
                             name='channels'
@@ -61,17 +67,45 @@ export default function NavigationBar(props:NavbarProps){
 
                 </Row>
             </Form>
-           
-            <Nav className="ml-auto">
+        {auth.user()? (<Nav className="ml-auto">
                 <Row>
-                    <Form.Group as={Col}  >
-                            <Button variant="primary" type="submit" >Login</Button>            
+
+                    {/* Add become conntent creator button */}
+                   
+                    <Form.Group as={Col}   className='p-2'>
+                    <Form.Text>Hello {auth.user()?.role?.name}, {auth.user()?.username}</Form.Text>
+                            <Button 
+                            className='m-1' 
+                            variant="primary" 
+                            type="submit"
+                            onClick={auth.signout}
+                            >Logout</Button>            
                         
-                            <Button variant="info" type="submit" >Sign Up</Button>            
+                            
                     </Form.Group>
                 </Row>
                
-            </Nav>
+            </Nav>):(<Nav className="ml-auto">
+                <Row>
+                    <Form.Group as={Col}   className='p-2'>
+                            <Button 
+                            className='m-1' 
+                            variant="primary" 
+                            type="submit"
+                            onClick={() => navigate('login')}
+                            >Login</Button>            
+                        
+                            <Button 
+                            variant="info" 
+                            type="submit" 
+                            onClick={() => navigate('register')}>Sign Up</Button>            
+                    </Form.Group>
+                </Row>
+               
+            </Nav>) }
+                
+
+        
 
         </Navbar>
     )

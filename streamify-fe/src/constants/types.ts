@@ -34,8 +34,10 @@ export type Comment = {
 
 export type User = {
     id:number,
-    username:string,
-    role: Role
+    username?:string,
+    role?: Role,
+    accessToken?: string,
+    refreshToken?: string
 }
 export type Role = {
     id:number,
