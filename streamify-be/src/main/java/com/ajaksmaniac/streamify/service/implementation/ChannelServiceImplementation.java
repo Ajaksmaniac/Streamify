@@ -48,7 +48,7 @@ public class ChannelServiceImplementation implements ChannelService {
     public List<ChannelDto> getChannelByUserId(Long userId) {
         List<ChannelEntity> en = channelRepository.findByUserId(userId);
         if(en.isEmpty()){
-            throw new ChannelNotFoundException(userId);
+            return Collections.emptyList();
         }
 
         return channelMapper.convertListToDTO(en);
