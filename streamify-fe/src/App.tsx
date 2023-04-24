@@ -9,6 +9,8 @@ import VideoPage from './views/VideoPage';
 import ChannelPage from './views/ChannelPage';
 import RegisterPage from './views/RegisterPage';
 import LoginPage from './views/LoginPage';
+import CreateChannelPage from './views/CreateChannelPage';
+import NotFoundPage from './views/NotFoundPage';
 
 function App() {
   return (
@@ -23,8 +25,8 @@ function App() {
               <Route path="/channel/:id" element={<ChannelPage />} />
               <Route path="/register" element={<RegisterPage />} />
               <Route path="/login" element={<LoginPage />} />
-
-
+              <Route path="/addChannel" element={<CreateChannelPage />} />
+              <Route path='*' element={<NotFoundPage />}/>
             </Routes>
           </BrowserRouter>        
         <Footer/>
