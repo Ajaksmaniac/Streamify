@@ -17,7 +17,6 @@ const CreateChannelPage = () => {
     const [username,setUsername] = useState(auth.user()?.username!)
     const [channelName,setChannelName] = useState("")
     const handleChange = (e: any) =>{
-        console.log(e)
         if(e.target.id=="username"){
             setUsername(e.target.value)
         }
@@ -39,6 +38,7 @@ const CreateChannelPage = () => {
         const channelName = e.target.elements["channelName"].value;
         createChannel(channelName,username, auth.user()?.accessToken!).then(res=>{
             navigate(`/channel/${res.data.id}`)
+            window.location.reload()
         }).catch(e=>{
             setError(e.response.data.detail)
         })

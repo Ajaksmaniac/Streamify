@@ -36,9 +36,13 @@ export default function NavigationBar(props:NavbarProps){
 
     
     useEffect(()=>{
-        getChannelDetailsByUserId(auth.user()?.id!).then(res=>{
-            setUserChannels(res.data)
-        })
+        if(auth.user()){
+            getChannelDetailsByUserId(auth.user()?.id!).then(res=>{
+                setUserChannels(res.data)
+            }).catch(e=>{
+                setUserChannels([])
+            })
+        }
     },[])
        
     

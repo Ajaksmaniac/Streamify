@@ -15,7 +15,8 @@ export type Video = {
     id: number,
     name: string,
     channelId: number,
-    url:String
+    url:string,
+    description: string
 }
 
 export type Channel = {

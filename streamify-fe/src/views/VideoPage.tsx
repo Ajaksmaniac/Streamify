@@ -6,44 +6,99 @@ import { getChannelDetails } from '../util/channelUtil';
 import { Channel, Comment, Video } from '../constants/types';
 import { getCommentsForVideo } from '../util/commentUtil';
 import CommentBox from '../components/CommentBox';
+import AddComment from '../components/AddComment';
+import { getVideoDetailsById } from '../util/videoUtil';
+import DescriptionBox from '../components/DescriptionBox';
+import { useAuth } from '../hooks/useAuth';
+import CommentDeletedAlert from '../components/alerts/CommentDeletedAlert';
 
 
 const VideoPage = () => {
+    const auth = useAuth();
     const location = useLocation();
     const navigate = useNavigate();
-
-    const video = location.state.video as Video;
-
+    
+    const videoDetailsId = location.pathname.split('/')[2];
+    // console.log(videoDetailsId)
+    // const video = location.state.video as Video;
+    const [video,setVideo] = useState({} as Video)
     const [channel,setChannel] = useState({} as Channel); 
     const [comments,setComments] = useState([] as Comment[]); 
-    const src = `http://localhost:8080${video.url}`;
+    const [showDeleteCommentAlert,setShowDeleteCommentAlert] = useState(false)
+    
 
     useEffect(()=>{
-        getChannelDetails(video.channelId).then(res =>{
-            setChannel(res.data);
+        getVideoDetailsById(videoDetailsId).then(res=>{
+            setVideo(res.data)
         })
+      },[])
 
+    useEffect(()=>{ 
+        if(video.url){
+            getChannelDetails(video.channelId).then(res =>{
+                setChannel(res.data);
+            })
+
+            reloadComments()
+        }
+        
+
+      },[video])
+      const reloadComments = () =>{
+        console.log("reloading Comments")
+        setComments([])
         getCommentsForVideo(video.id).then(res =>{
             setComments(res.data)
         })
-      },[])
+    
+      }
+      const deleteComment = () =>{
+        reloadComments()
+        setShowDeleteCommentAlert(true)
+      }
+
+      const showDeleteCommentButton = (): boolean =>{
+        if(auth.user()?.role?.name == 'admin') return true
+        if(auth.user()?.username == channel.username) return true
+
+        return false
+      }
+      const src = `http://localhost:8080${video.url}`;
     // console.log(video)
     return (
         <Container className="mt-2">
+            {video.url && (
             <ReactPlayer url={src} playing={true}  controls width={"100%"} ></ReactPlayer>
+
+            )}
             <h1>{video.name}</h1>
             <h3>Posted By 
                 <a 
                 onClick={() => navigate(`/channel/${channel.id}`, { state: { channel: channel } })}
                 >{channel.channelName}</a>
             </h3> 
+            <DescriptionBox description={video.description}/>
 
             <h4>Comments for this video</h4>
-            {comments.map(comment=>{
+            <div className='w-50'>
+            {video.url && comments && (
+                <>
+                {comments.map(comment=>{
                 return (
-                 <CommentBox comment={comment}/>                
+                 <CommentBox comment={comment} key={comment.id} deleteCommentCallback={deleteComment} showDeleteCommentButton={showDeleteCommentButton()}/>                
                  )
             })}
+              {showDeleteCommentAlert && (
+           <CommentDeletedAlert content="Comment Successfully Deleted" show={showDeleteCommentAlert}/> 
+
+    )}
+
+                </>
+            )}
+            {auth.user() && <AddComment videoId={video.id} callback={reloadComments} />}
+            </div>
+            
+            
         </Container>
     );
 };
