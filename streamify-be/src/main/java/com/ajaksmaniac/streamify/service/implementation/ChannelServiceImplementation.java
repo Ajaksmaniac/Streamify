@@ -45,6 +45,16 @@ public class ChannelServiceImplementation implements ChannelService {
     }
 
     @Override
+    public List<ChannelDto> getChannelByUserId(Long userId) {
+        List<ChannelEntity> en = channelRepository.findByUserId(userId);
+        if(en.isEmpty()){
+            throw new ChannelNotFoundException(userId);
+        }
+
+        return channelMapper.convertListToDTO(en);
+    }
+
+    @Override
     public ChannelDto createChannel(ChannelDto channelDto) {
 
         if(channelRepository.existsByChannelName(channelDto.getChannelName())){
@@ -52,7 +62,7 @@ public class ChannelServiceImplementation implements ChannelService {
         }
 
         Optional<UserEntity> chanelOwner = userRepository.findByUsername(channelDto.getUsername()) ;
-        if(chanelOwner.isPresent()){
+        if(!chanelOwner.isPresent()){
             throw new UserNotExistentException(channelDto.getUsername());
         }
 

@@ -8,6 +8,7 @@ import java.util.List;
 public interface ChannelService {
 
     ChannelDto getChannelById(Long channelId);
+    List<ChannelDto> getChannelByUserId(Long userId);
     ChannelDto createChannel(ChannelDto channelDto);
     ChannelDto updateChannel(ChannelDto channelDto);
     void deleteById(Long id);

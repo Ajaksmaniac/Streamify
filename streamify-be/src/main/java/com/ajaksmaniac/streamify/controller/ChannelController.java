@@ -28,6 +28,11 @@ public class ChannelController {
         return ResponseEntity.ok(channelService.getChannelById(id));
 
     }
+    @GetMapping("/user/id/{id}")
+    public ResponseEntity<List<ChannelDto>> getChannelDetailsByUserId(@PathVariable("id") Long id) {
+        return ResponseEntity.ok(channelService.getChannelByUserId(id));
+
+    }
 
     @PostMapping
     public ResponseEntity<ChannelDto> saveChannel(@RequestBody ChannelDto dto) {
