@@ -1,7 +1,7 @@
 import axios from "axios"
 
 export const getAllVideos = ()=>{
-return axios.get(`${process.env.REACT_APP_BE_SERVER}${process.env.REACT_APP_GET_ALL_VIDEOS_ENDPOINT}`)
+    return axios.get(`${process.env.REACT_APP_BE_SERVER}${process.env.REACT_APP_GET_ALL_VIDEOS_ENDPOINT}`)
 }
 
 export const searchVideosByKeywords = (keywords: string)=>{
@@ -15,3 +15,27 @@ export const searchGetVideosForChannel = (channelId: number)=>{
 export const getVideoDetailsById = (videoId: number|string)=>{
     return axios.get(`${process.env.REACT_APP_BE_SERVER}${process.env.REACT_APP_GET_VIDEO_DETAILS_ENDPOINT}${videoId}`)
 }
+
+
+export const deleteVideo = (videoId: number|string, accessToken: string)=>{
+    return axios.delete(`${process.env.REACT_APP_BE_SERVER}${process.env.REACT_APP_DELETE_VIDEO_ENDPOINT}${videoId}`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "multipart/form-data",
+      },
+    })
+}
+
+
+export const uploadVideo = (formData: FormData, accessToken: string) => {
+    return axios.post(
+      `${process.env.REACT_APP_BE_SERVER}${process.env.REACT_APP_POST_VIDEO_ENDPOINT}`,
+      formData,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+  };
