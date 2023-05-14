@@ -11,6 +11,7 @@ import { getVideoDetailsById } from '../util/videoUtil';
 import DescriptionBox from '../components/DescriptionBox';
 import { useAuth } from '../hooks/useAuth';
 import CommentDeletedAlert from '../components/alerts/CommentDeletedAlert';
+import DeleteVideoButton from '../components/buttons/DeleteVideoButton';
 
 
 const VideoPage = () => {
@@ -63,6 +64,14 @@ const VideoPage = () => {
 
         return false
       }
+
+      const showDeleteVideo = (): boolean =>{
+        if(auth.user()?.role?.name == 'admin') return true
+        if(auth.user()?.username == channel.username) return true
+
+        return false
+      }
+
       const src = `http://localhost:8080${video.url}`;
     // console.log(video)
     return (
@@ -71,7 +80,16 @@ const VideoPage = () => {
             <ReactPlayer url={src} playing={true}  controls width={"100%"} ></ReactPlayer>
 
             )}
-            <h1>{video.name}</h1>
+            <h1>{video.name}
+              {showDeleteVideo() && 
+              (
+                <span>
+                    <DeleteVideoButton videoId={video.id} callback={() => {window.location.replace(window.origin);
+}}/>
+                </span>
+              )}
+            </h1>
+
             <h3>Posted By 
                 <a 
                 onClick={() => navigate(`/channel/${channel.id}`, { state: { channel: channel } })}
