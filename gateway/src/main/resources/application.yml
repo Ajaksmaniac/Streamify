@@ -1,0 +1,48 @@
+server:
+  port: 8082
+
+
+
+
+spring:
+  cloud:
+    gateway:
+
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins: "http://localhost:3000"
+            allowedHeaders: "*"
+            allowedMethods:
+              - GET
+              - POST
+              - DELETE
+              - PUT
+              - OPTIONS
+      routes:
+        - id: streamify-video-service
+          uri: lb://STREAMIFY-VIDEO-SERVICE
+          predicates:
+            - Path=/video/**,/channel/**, /comment/**
+          filters:
+            - name: AuthenticationFilter
+              args:
+                methods: POST, OPTIONS, DELETE, PUT
+
+        - id: streamify-identity-service
+          uri: lb://STREAMIFY-IDENTITY-SERVICE
+          predicates:
+            - Path=/auth/**, /user/**
+
+
+
+
+  application:
+    name: STREAMIFY-GATEWAY
+
+eureka:
+  client:
+    service-url:
+      defaultZone : http://localhost:8761/eureka/
