@@ -3,6 +3,7 @@ package com.ajaksmaniac.identityservice.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.annotations.Fetch;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -34,6 +35,8 @@ public class UserEntity implements UserDetails {
     @JoinColumn(name = "role_id", nullable = false)
     private RoleEntity role;
 
+    @ManyToMany(fetch = FetchType.EAGER)
+    private List<ChannelEntity> subscribedChannels;
 
 
 

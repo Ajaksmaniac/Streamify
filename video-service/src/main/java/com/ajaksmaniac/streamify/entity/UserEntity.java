@@ -33,7 +33,8 @@ public class UserEntity implements UserDetails {
     @JoinColumn(name = "role_id", nullable = false)
     private RoleEntity role;
 
-
+    @ManyToMany
+    private List<ChannelEntity> subscribedChannels;
 
 
     public String getIdString() {
@@ -68,6 +69,15 @@ public class UserEntity implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    public void subscribe(ChannelEntity channel){
+        this.subscribedChannels.add(channel);
+
+    }
+    public void unsubscribe(ChannelEntity channel){
+        this.subscribedChannels.remove(channel);
+
     }
 
 }

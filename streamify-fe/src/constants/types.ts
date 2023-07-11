@@ -38,7 +38,9 @@ export type User = {
     username?:string,
     role?: Role,
     accessToken?: string,
-    refreshToken?: string
+    refreshToken?: string,
+    subscribedChannels: Channel[]
+
 }
 export type Role = {
     id:number,

@@ -72,4 +72,16 @@ public class ChannelController {
     public ResponseEntity<List<ChannelDto>> search(@RequestParam("keywords") String keywords) {
         return ResponseEntity.ok(channelService.search(keywords));
     }
+
+    @PostMapping("/subscribe")
+    public ResponseEntity<String> subscribe(@RequestHeader("channel") Long channel, @RequestHeader("x-auth-user-id") Long authenticatedUser) {
+        channelService.subscribeToChannel(authenticatedUser,channel);
+        return ResponseEntity.ok("Subscribed");
+    }
+
+    @PostMapping("/unsubscribe")
+    public ResponseEntity<String> unsubscribe(@RequestHeader("channel") Long channel, @RequestHeader("x-auth-user-id") Long authenticatedUser) {
+        channelService.unsubscribeFromChannel(authenticatedUser,channel);
+        return ResponseEntity.ok("Subscribed");
+    }
 }

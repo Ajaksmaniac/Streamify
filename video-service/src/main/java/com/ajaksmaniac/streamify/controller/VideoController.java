@@ -1,5 +1,7 @@
 package com.ajaksmaniac.streamify.controller;
 
+import com.ajaksmaniac.streamify.configuration.KafkaProducerService;
+import com.ajaksmaniac.streamify.dto.ChannelDto;
 import com.ajaksmaniac.streamify.dto.VideoDetailsDto;
 import com.ajaksmaniac.streamify.service.ChannelService;
 import com.ajaksmaniac.streamify.service.VideoService;
@@ -32,15 +34,23 @@ public class VideoController {
     @Qualifier(value = "videoServiceImplementation")
     private VideoService videoService;
 
+    @Autowired
+    KafkaProducerService kafkaProducerService;
+
+    @Autowired
+    @Qualifier(value = "channelServiceImplementation")
+    ChannelService channelService;
+
 
 
     @PostMapping()
     public ResponseEntity<VideoDetailsDto> saveVideo(@RequestParam("file") MultipartFile file, @RequestParam("name") String name, @RequestParam("channelId") Long channelId,  @RequestParam("description") String description,@HeaderParam("X-auth-user-id") Long authenticatedUser) throws IOException {
 
 
-        return ResponseEntity.ok(videoService.saveVideo(file, name, channelId,description,authenticatedUser));
-
-
+        VideoDetailsDto videoDetailsDto = videoService.saveVideo(file, name, channelId,description,authenticatedUser);
+        ChannelDto channel =  channelService.getChannelById(channelId);
+        kafkaProducerService.sendMessage("/notification",String.format("%s uploaded a new video: %s", channel.getChannelName(), videoDetailsDto.getName()));
+        return ResponseEntity.ok(videoDetailsDto);
     }
 
     @PutMapping("/id/{id}")

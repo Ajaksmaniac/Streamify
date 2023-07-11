@@ -14,5 +14,6 @@ public class UserDto {
     Long id;
     String username;
     RoleDto role;
+    List<ChannelDto> subscribedChannels;
 
 }

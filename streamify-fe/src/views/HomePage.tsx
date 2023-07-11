@@ -7,9 +7,12 @@ export function HomePage () {
   const [videos,setVideos] = useState([]);
   
   useEffect(()=>{
-    getAllVideos().then(res =>{
-      setVideos(res.data);
-    })
+    if(videos.length < 1){
+      getAllVideos().then(res =>{
+        setVideos(res.data);
+      })
+    }
+    
   },[])
 
     return (

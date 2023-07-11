@@ -25,8 +25,7 @@ const VideoPage = () => {
     const [video,setVideo] = useState({} as Video)
     const [channel,setChannel] = useState({} as Channel); 
     const [comments,setComments] = useState([] as Comment[]); 
-    const [showDeleteCommentAlert,setShowDeleteCommentAlert] = useState(false)
-    
+    const [showDeleteCommentAlert,setShowDeleteCommentAlert] = useState(false) 
 
     useEffect(()=>{
         getVideoDetailsById(videoDetailsId).then(res=>{
@@ -72,7 +71,7 @@ const VideoPage = () => {
         return false
       }
 
-      const src = `http://localhost:8080${video.url}`;
+      const src = `http://localhost:8082${video.url}`;
     // console.log(video)
     return (
         <Container className="mt-2">
@@ -94,6 +93,13 @@ const VideoPage = () => {
                 <a 
                 onClick={() => navigate(`/channel/${channel.id}`, { state: { channel: channel } })}
                 >{channel.channelName}</a>
+               {/* {
+                  auth.user()?.subscribedChannels.find(c =>c.id ==  channel.id) ? (
+                      <button className='btn btn-primary mb-3'>Unsubscribe</button>
+                  ):(
+                    <button className='btn btn-primary mb-3'>Subscribe</button>
+                  )
+                } */}
             </h3> 
             <DescriptionBox description={video.description}/>
 

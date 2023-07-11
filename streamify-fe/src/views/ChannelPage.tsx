@@ -9,6 +9,8 @@ import { getChannelDetails } from "../util/channelUtil";
 import { useAuth } from "../hooks/useAuth";
 import AddVideoModal from "../components/modals/AddVideoModal";
 import DeleteChannelButton from "../components/buttons/DeleteChannelButton";
+import { subscribeToChannel, unsubscribeFromChannel } from "../util/helpers";
+import { unscubscribe } from "../util/userUtil";
 // import { log } from "console";
 
 export default function ChannelPage() {
@@ -22,6 +24,8 @@ export default function ChannelPage() {
   const [channel, setChannel] = useState({} as Channel);
   const [videos, setVideos] = useState([] as Video[]);
 
+  const [showSubscribe,setShowSubscribe] = useState(false)
+
   useEffect(() => {
     getChannelDetails(params.id).then((res) => {
       setChannel(res.data);
@@ -31,6 +35,18 @@ export default function ChannelPage() {
       setVideos(res.data);
     });
   }, []);
+  useEffect(() => {
+    setSubscriptionStatus()
+  }, [channel]);
+
+
+  const setSubscriptionStatus = () => {
+    if (auth.user() && auth.user()?.subscribedChannels.find(c => c.id === channel.id)) {
+      setShowSubscribe(false);
+    } else {
+      setShowSubscribe(true);
+    }
+  };
 
   const showDeleteChannelButton = (): boolean =>{
     if(auth.user()?.role?.name == 'admin') return true
@@ -38,6 +54,8 @@ export default function ChannelPage() {
 
     return false
   }
+
+
 
   return (
     <Container className="my-auto">
@@ -53,7 +71,37 @@ export default function ChannelPage() {
           }
           </h1>
           <h2>This channel is owned by {channel.username}</h2>
+          {auth.user() && (
+            <>
+            {showSubscribe ? (
+                            <button className='btn btn-primary mb-3' onClick={()=>subscribeToChannel(auth.user()!,channel.id).then(()=>{
+                              auth.reload()
+                              setShowSubscribe(false)
+                            })} 
+                           >Subscribe</button>
+
+            ):(
+              <button className='btn btn-primary mb-3' onClick={()=>unsubscribeFromChannel(auth.user()!,channel.id).then(()=>{
+                auth.reload()
+                setShowSubscribe(true)
+
+              })}
+              >Unsubscribe</button>
+            )}
+
+
+
+            </>
+                 
+              )
+
+          }
+
+
+         
+      
           <h3 className="border-top">Videos</h3>
+         
           <BoxGrid items={videos} />
           {auth.user()?.username == channel.username && (
           

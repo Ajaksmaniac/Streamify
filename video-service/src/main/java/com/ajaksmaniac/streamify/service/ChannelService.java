@@ -14,5 +14,8 @@ public interface ChannelService {
     void deleteById(Long id,Long authenticatedUserId);
     List<ChannelDto> getAllChannels();
     List<ChannelDto> search(String keywords);
+    void subscribeToChannel(Long userId, Long channelId);
+    void unsubscribeFromChannel(Long userId, Long channelId);
+
 
 }
