@@ -1,10 +1,8 @@
-package com.ajaksmaniac.streamify.controller;
+package com.ajaksmaniac.identityservice.controller;
 
-import com.ajaksmaniac.streamify.dto.UserDto;
-import com.ajaksmaniac.streamify.entity.UserEntity;
-import com.ajaksmaniac.streamify.exception.user.UserNotExistentException;
-import com.ajaksmaniac.streamify.repository.UserRepository;
-import com.ajaksmaniac.streamify.service.UserService;
+import com.ajaksmaniac.identityservice.dto.UserDto;
+import com.ajaksmaniac.identityservice.entity.UserEntity;
+import com.ajaksmaniac.identityservice.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,8 +12,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Optional;
 
 
 @RequiredArgsConstructor

@@ -1,7 +1,7 @@
-package com.ajaksmaniac.streamify.security;
+package com.ajaksmaniac.identityservice.security;
 
-import com.ajaksmaniac.streamify.dto.TokenDto;
-import com.ajaksmaniac.streamify.entity.UserEntity;
+import com.ajaksmaniac.identityservice.dto.TokenDto;
+import com.ajaksmaniac.identityservice.entity.UserEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -11,11 +11,6 @@ import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.stereotype.Component;
-
-import java.text.MessageFormat;
-import java.time.Duration;
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 
 import java.text.MessageFormat;
 import java.time.Duration;

@@ -1,10 +1,10 @@
-package com.ajaksmaniac.streamify.service;
+package com.ajaksmaniac.identityservice.service;
 
-import com.ajaksmaniac.streamify.entity.RoleEntity;
-import com.ajaksmaniac.streamify.entity.UserEntity;
-import com.ajaksmaniac.streamify.exception.user.UserAlreadyExistsException;
-import com.ajaksmaniac.streamify.exception.user.UserNotExistentException;
-import com.ajaksmaniac.streamify.repository.UserRepository;
+import com.ajaksmaniac.identityservice.entity.RoleEntity;
+import com.ajaksmaniac.identityservice.entity.UserEntity;
+import com.ajaksmaniac.identityservice.exception.user.UserAlreadyExistsException;
+import com.ajaksmaniac.identityservice.exception.user.UserNotExistentException;
+import com.ajaksmaniac.identityservice.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

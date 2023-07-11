@@ -1,13 +1,14 @@
-package com.ajaksmaniac.streamify.security;
+package com.ajaksmaniac.identityservice.security;
 
-import com.ajaksmaniac.streamify.entity.UserEntity;
-import com.ajaksmaniac.streamify.repository.UserRepository;
+import com.ajaksmaniac.identityservice.entity.UserEntity;
+import com.ajaksmaniac.identityservice.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Component;
+
 import java.util.Collections;
 
 @Component

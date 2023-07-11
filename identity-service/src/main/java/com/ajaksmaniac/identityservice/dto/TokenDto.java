@@ -1,4 +1,4 @@
-package com.ajaksmaniac.streamify.dto;
+package com.ajaksmaniac.identityservice.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
