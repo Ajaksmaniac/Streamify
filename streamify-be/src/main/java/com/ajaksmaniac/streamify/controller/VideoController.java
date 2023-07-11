@@ -3,8 +3,10 @@ package com.ajaksmaniac.streamify.controller;
 import com.ajaksmaniac.streamify.dto.VideoDetailsDto;
 import com.ajaksmaniac.streamify.service.ChannelService;
 import com.ajaksmaniac.streamify.service.VideoService;
+import jakarta.ws.rs.HeaderParam;
 import lombok.AllArgsConstructor;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpHeaders;
@@ -17,12 +19,14 @@ import org.springframework.core.io.Resource;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 
 @RestController
 @RequestMapping("video")
 @AllArgsConstructor
 @CrossOrigin
+@Slf4j
 public class VideoController {
     @Autowired
     @Qualifier(value = "videoServiceImplementation")
@@ -31,19 +35,19 @@ public class VideoController {
 
 
     @PostMapping()
-    public ResponseEntity<VideoDetailsDto> saveVideo(@RequestParam("file") MultipartFile file, @RequestParam("name") String name, @RequestParam("channelId") Long channelId,  @RequestParam("description") String description) throws IOException {
+    public ResponseEntity<VideoDetailsDto> saveVideo(@RequestParam("file") MultipartFile file, @RequestParam("name") String name, @RequestParam("channelId") Long channelId,  @RequestParam("description") String description,@HeaderParam("X-auth-user-id") Long authenticatedUser) throws IOException {
 
 
-        return ResponseEntity.ok(videoService.saveVideo(file, name, channelId,description));
+        return ResponseEntity.ok(videoService.saveVideo(file, name, channelId,description,authenticatedUser));
 
 
     }
 
     @PutMapping("/id/{id}")
-    public ResponseEntity<VideoDetailsDto> update(@PathVariable("id") Long id,@RequestParam("name") String name,  @RequestParam("description") String description,@RequestParam(value = "file",required = false) MultipartFile file) throws IOException {
+    public ResponseEntity<VideoDetailsDto> update(@PathVariable("id") Long id,@RequestParam("name") String name,  @RequestParam("description") String description,@RequestParam(value = "file",required = false) MultipartFile file,@HeaderParam("X-auth-user-id") Long authenticatedUser) throws IOException {
 
 
-        return ResponseEntity.ok( videoService.updateVideo(id, name,description,file));
+        return ResponseEntity.ok( videoService.updateVideo(id, name,description,file,authenticatedUser));
 
 
     }
@@ -86,8 +90,9 @@ public class VideoController {
     }
 
     @DeleteMapping("/id/{id}")
-    public ResponseEntity<String> deleteVideo(@PathVariable("id") Long id) throws IOException {
-        videoService.deleteVideo(id);
+    public ResponseEntity<String> deleteVideo(@PathVariable("id") Long id, @RequestHeader("x-auth-user-id") Long authenticatedUser) throws IOException {
+        log.info("USER ID:" +  authenticatedUser);
+        videoService.deleteVideo(id,authenticatedUser);
         return ResponseEntity.ok(String.format("Video with id %d successfully deleted",id));
     }
 }

@@ -55,7 +55,7 @@ public class ChannelServiceImplementation implements ChannelService {
     }
 
     @Override
-    public ChannelDto createChannel(ChannelDto channelDto) {
+    public ChannelDto createChannel(ChannelDto channelDto,Long authenticatedUserId) {
 
         if(channelRepository.existsByChannelName(channelDto.getChannelName())){
             throw new ChannelAlreadyExistsException(channelDto.getChannelName());
@@ -66,21 +66,21 @@ public class ChannelServiceImplementation implements ChannelService {
             throw new UserNotExistentException(channelDto.getUsername());
         }
 
-        if (!userUtil.isUserAdmin(sessionUser())) {
-            if(!userUtil.isUserContentCreator(sessionUser())) throw new UserNotContentCreatorException(sessionUser().getId());
+        if (!userUtil.isUserAdmin(sessionUser(authenticatedUserId))) {
+            if(!userUtil.isUserContentCreator(sessionUser(authenticatedUserId))) throw new UserNotContentCreatorException(sessionUser(authenticatedUserId).getId());
 
-            if(!channelDto.getUsername().equals(sessionUser().getUsername())) throw new UserNotPermittedToCreateChannelForOthersException(sessionUser().getId());
+            if(!channelDto.getUsername().equals(sessionUser(authenticatedUserId).getUsername())) throw new UserNotPermittedToCreateChannelForOthersException(sessionUser(authenticatedUserId).getId());
 
         }
 
 
-        ChannelEntity en = new ChannelEntity(null,channelDto.getChannelName(),chanelOwner.get(), null);
+        ChannelEntity en = new ChannelEntity(null,channelDto.getChannelName(),chanelOwner.get(),null, null);
         return channelMapper.convertToDto(channelRepository.save(en));
 
     }
 
     @Override
-    public ChannelDto updateChannel(ChannelDto channelDto) {
+    public ChannelDto updateChannel(ChannelDto channelDto,Long authenticatedUserId) {
         Optional<ChannelEntity> entity = channelRepository.findById(channelDto.getId());
 
         if(entity.isEmpty()){
@@ -88,15 +88,15 @@ public class ChannelServiceImplementation implements ChannelService {
         }
 
 
-        if (!userUtil.isUserAdmin(sessionUser())) {
-            if(!userUtil.isUserContentCreator(sessionUser())) throw new UserNotContentCreatorException(sessionUser().getId());
-            if(!entity.get().getUser().getUsername().equals(sessionUser().getUsername())) throw new UserNotPermittedToUpdateChannelForOthersException(sessionUser().getId());
+        if (!userUtil.isUserAdmin(sessionUser(authenticatedUserId))) {
+            if(!userUtil.isUserContentCreator(sessionUser(authenticatedUserId))) throw new UserNotContentCreatorException(sessionUser(authenticatedUserId).getId());
+            if(!entity.get().getUser().getUsername().equals(sessionUser(authenticatedUserId).getUsername())) throw new UserNotPermittedToUpdateChannelForOthersException(sessionUser(authenticatedUserId).getId());
 
         }else{
             //Only Admin can change channel owners
             if(!userRepository.existsByUsername(channelDto.getUsername())) throw new UserNotExistentException(channelDto.getUsername());
             UserEntity userEntity = userRepository.findByUsername(channelDto.getUsername()).get();
-            if(!sessionUser().getUsername().equals(channelDto.getUsername()) && !userUtil.isUserContentCreator(userEntity)){
+            if(!sessionUser(authenticatedUserId).getUsername().equals(channelDto.getUsername()) && !userUtil.isUserContentCreator(userEntity)){
                 userEntity.setRole(new RoleEntity(2L));
             }
             entity.get().setUser(userEntity);
@@ -112,17 +112,17 @@ public class ChannelServiceImplementation implements ChannelService {
     }
 
     @Override
-    public void deleteById(Long id) {
+    public void deleteById(Long id,Long authenticatedUserId) {
 
         if(!channelRepository.existsById(id)) {
             throw new ChannelNotFoundException(id);
         }
 
-        if(!userUtil.isUserAdmin(sessionUser())){
-            if(!userUtil.isUserContentCreator(sessionUser())) throw new UserNotContentCreatorException(sessionUser().getId());
+        if(!userUtil.isUserAdmin(sessionUser(authenticatedUserId))){
+            if(!userUtil.isUserContentCreator(sessionUser(authenticatedUserId))) throw new UserNotContentCreatorException(sessionUser(authenticatedUserId).getId());
 
-            List<ChannelEntity> channels =channelRepository.findByUserId(sessionUser().getId()).stream().filter(c -> Objects.equals(c.getId(), id)).toList();
-            if(channels.isEmpty()) throw new UserNotPermittedToDeleteChannelForOthersException(sessionUser().getId());
+            List<ChannelEntity> channels =channelRepository.findByUserId(sessionUser(authenticatedUserId).getId()).stream().filter(c -> Objects.equals(c.getId(), id)).toList();
+            if(channels.isEmpty()) throw new UserNotPermittedToDeleteChannelForOthersException(sessionUser(authenticatedUserId).getId());
         }
 
         channelRepository.deleteById(id);
@@ -148,8 +148,9 @@ public class ChannelServiceImplementation implements ChannelService {
         return channelMapper.convertListToDTO(channelMap.values().stream().toList());
     }
 
-    private UserEntity sessionUser() {
-        return (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    private UserEntity sessionUser(Long userId) {
+        Optional< UserEntity > user = Optional.ofNullable(userRepository.findById(userId).orElseThrow(() ->
+                new UserNotExistentException(String.valueOf(userId))));
+        return user.get();
     }
-
 }

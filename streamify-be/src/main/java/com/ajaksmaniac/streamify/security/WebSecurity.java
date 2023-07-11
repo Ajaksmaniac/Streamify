@@ -33,30 +33,21 @@ import org.springframework.security.oauth2.server.resource.web.access.BearerToke
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
-import org.springframework.security.web.server.SecurityWebFilterChain;
-import org.springframework.security.web.server.context.NoOpServerSecurityContextRepository;
-import org.springframework.security.web.server.csrf.CookieServerCsrfTokenRepository;
-import org.springframework.security.web.server.csrf.CsrfWebFilter;
-import org.springframework.security.web.server.util.matcher.ServerWebExchangeMatcher;
-import org.springframework.security.web.server.util.matcher.ServerWebExchangeMatchers;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import java.nio.file.attribute.UserPrincipal;
+import java.util.Arrays;
+import java.util.List;
 
 
 @Configuration
-@EnableMethodSecurity(prePostEnabled = true)
+//@EnableMethodSecurity(prePostEnabled = true)
 @EnableWebSecurity
 @Slf4j
 public class WebSecurity {
 
-    @Autowired
-    JwtToUserConverter jwtToUserConverter;
 
-    @Autowired
-    KeyUtils keyUtils;
-
-    @Autowired
-    PasswordEncoder passwordEncoder;
     @Autowired
     UserDetailsManager userDetailsManager;
 
@@ -64,73 +55,10 @@ public class WebSecurity {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .httpBasic().disable()
-                .csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()).ignoringRequestMatchers("/auth/login","/auth/register","*"))
-                .oauth2ResourceServer(oauth2 ->
-                        oauth2.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtToUserConverter))
-                )
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .exceptionHandling(exceptions ->
-                        exceptions.authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint())
-                                .accessDeniedHandler(new BearerTokenAccessDeniedHandler())
-                );
+                .httpBasic().disable().csrf().disable();
+
+
         return http.build();
-    }
-
-
-    @Bean
-    @Primary
-    JwtDecoder jwtAccessTokenDecoder(){
-        return NimbusJwtDecoder.withPublicKey(keyUtils.getAccessTokenPublicKey()).build();
-    }
-
-    @Bean
-    @Primary
-    JwtEncoder jwtAccessTokenEncoder(){
-        JWK jwk = new RSAKey
-                .Builder(keyUtils.getAccessTokenPublicKey())
-                .privateKey(keyUtils.getAccessTokenPrivateKey())
-                .build();
-
-        JWKSource<SecurityContext> jwks = new ImmutableJWKSet<>(new JWKSet(jwk));
-
-        return new NimbusJwtEncoder(jwks);
-    }
-
-    @Bean
-    @Qualifier("jwtRefreshTokenDecoder")
-    JwtDecoder jwtRefreshTokenDecoder(){
-        return NimbusJwtDecoder.withPublicKey(keyUtils.getRefreshTokenPublicKey()).build();
-    }
-
-    @Bean
-    @Qualifier("jwtRefreshTokenEncoder")
-    JwtEncoder jwtRefreshTokenEncoder(){
-        JWK jwk = new RSAKey
-                .Builder(keyUtils.getRefreshTokenPublicKey())
-                .privateKey(keyUtils.getRefreshTokenPrivateKey())
-                .build();
-
-        JWKSource<SecurityContext> jwks = new ImmutableJWKSet<>(new JWKSet(jwk));
-
-        return new NimbusJwtEncoder(jwks);
-    }
-
-    @Bean
-    @Qualifier("jwtRefreshTokenAuthProvider")
-    JwtAuthenticationProvider jwtRefreshTokenAuthProvider(){
-        JwtAuthenticationProvider provider = new JwtAuthenticationProvider(jwtRefreshTokenDecoder());
-        provider.setJwtAuthenticationConverter(jwtToUserConverter);
-
-        return provider;
-    }
-
-    @Bean
-    DaoAuthenticationProvider daoAuthenticationProvider(){
-        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setPasswordEncoder(passwordEncoder);
-        provider.setUserDetailsService(userDetailsManager);
-        return provider;
     }
 
 }

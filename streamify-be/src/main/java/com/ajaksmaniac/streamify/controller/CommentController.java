@@ -33,16 +33,16 @@ public class CommentController {
     }
 
     @PostMapping
-    public ResponseEntity<CommentDto> saveComment(@RequestBody CommentDto comment){
+    public ResponseEntity<CommentDto> saveComment(@RequestBody CommentDto comment, @RequestHeader("x-auth-user-id") Long authenticatedUser){
 
 
-            return ResponseEntity.ok(commentService.saveComment(comment));
+            return ResponseEntity.ok(commentService.saveComment(comment,authenticatedUser));
 
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<String> deleteComment(@PathVariable("id") Long id){
-            commentService.deleteById(id);
+    public ResponseEntity<String> deleteComment(@PathVariable("id") Long id, @RequestHeader("x-auth-user-id") Long authenticatedUser){
+            commentService.deleteById(id,authenticatedUser);
             return ResponseEntity.status(HttpStatus.OK).body(String.format("Comment with id %d successfully deleted", id));
     }
 }

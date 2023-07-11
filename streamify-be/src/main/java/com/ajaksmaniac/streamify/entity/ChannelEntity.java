@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 
 import java.util.List;
@@ -28,6 +29,9 @@ public class ChannelEntity{
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private UserEntity user;
+
+    @ManyToMany
+    private List<UserEntity> subscribers;
 
     @OneToMany(cascade = CascadeType.ALL,mappedBy = "channel", orphanRemoval = true, fetch = FetchType.LAZY)
     private List<VideoDetailsEntity> videos;

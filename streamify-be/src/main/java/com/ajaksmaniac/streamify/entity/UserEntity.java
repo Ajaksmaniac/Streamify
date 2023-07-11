@@ -7,6 +7,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import jakarta.persistence.*;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 @Data
 @RequiredArgsConstructor
@@ -31,6 +32,8 @@ public class UserEntity implements UserDetails {
     @OneToOne()
     @JoinColumn(name = "role_id", nullable = false)
     private RoleEntity role;
+
+
 
 
     public String getIdString() {
@@ -66,4 +69,5 @@ public class UserEntity implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
 }

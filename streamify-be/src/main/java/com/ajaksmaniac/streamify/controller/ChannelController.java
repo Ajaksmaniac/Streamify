@@ -35,24 +35,24 @@ public class ChannelController {
     }
 
     @PostMapping
-    public ResponseEntity<ChannelDto> saveChannel(@RequestBody ChannelDto dto) {
+    public ResponseEntity<ChannelDto> saveChannel(@RequestBody ChannelDto dto, @RequestHeader("x-auth-user-id") Long authenticatedUser) {
 
 
-        return ResponseEntity.ok(channelService.createChannel(dto));
+        return ResponseEntity.ok(channelService.createChannel(dto,authenticatedUser));
 
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteChannelById(@PathVariable("id") Long id) {
-            channelService.deleteById(id);
+    public ResponseEntity<String> deleteChannelById(@PathVariable("id") Long id, @RequestHeader("x-auth-user-id") Long authenticatedUser) {
+            channelService.deleteById(id,authenticatedUser);
             return ResponseEntity.ok(String.format("Channel with id %d successfully deleted", id));
 
     }
 
     @PutMapping
-    public  ResponseEntity<ChannelDto> updateChannel(@RequestBody ChannelDto dto){
+    public  ResponseEntity<ChannelDto> updateChannel(@RequestBody ChannelDto dto, @RequestHeader("x-auth-user-id") Long authenticatedUser){
 
-        return ResponseEntity.ok(channelService.updateChannel(dto));
+        return ResponseEntity.ok(channelService.updateChannel(dto,authenticatedUser));
 
     }
 

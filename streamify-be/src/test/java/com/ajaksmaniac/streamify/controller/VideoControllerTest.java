@@ -68,7 +68,7 @@ public class VideoControllerTest {
                 MediaType.MULTIPART_FORM_DATA_VALUE, "test video data".getBytes(StandardCharsets.UTF_8));
         String url = "/video?name=" + VIDEO_NAME + "&channelName=" + CHANNEL;
 
-        doNothing().when(videoService).saveVideo(any(), any(), any(), any());
+        doNothing().when(videoService).saveVideo(any(), any(), any(), any(), any());
         mockMvc.perform(MockMvcRequestBuilders.multipart(url)
                         .file(file))
                 .andExpect(MockMvcResultMatchers.status().isOk())

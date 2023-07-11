@@ -157,4 +157,20 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
         problemDetail.setType(new URI("CONFLICT"));
         return problemDetail;
     }
+
+    @ExceptionHandler(AlreadySubscribedException.class)
+    ProblemDetail handleAlreadySubscribedException(AlreadySubscribedException e) throws URISyntaxException  {
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, String.format("Already subscribed to %s", e.getName()));
+        problemDetail.setTitle("Already subscribed");
+        problemDetail.setType(new URI("CONFLICT"));
+        return problemDetail;
+    }
+
+    @ExceptionHandler(NotSubscribedException.class)
+    ProblemDetail handleNotSubscribedException(NotSubscribedException e) throws URISyntaxException  {
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, String.format("Not subscribed to %s", e.getName()));
+        problemDetail.setTitle("Not subscribed");
+        problemDetail.setType(new URI("NOT FOUND"));
+        return problemDetail;
+    }
 }

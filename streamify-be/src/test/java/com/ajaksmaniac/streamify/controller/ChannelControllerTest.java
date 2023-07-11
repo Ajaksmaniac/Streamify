@@ -53,7 +53,7 @@ public class ChannelControllerTest {
         // arrange
         Long id = 1L;
         UserEntity userEntity = new UserEntity("test","test");
-        ChannelEntity channelEntity = new ChannelEntity(1L,"testChannel",userEntity, null);
+        ChannelEntity channelEntity = new ChannelEntity(1L,"testChannel",userEntity, null,null);
         when(userRepository.existsByUsername("test")).thenReturn(true);
         when(userRepository.findByUsername("test")).thenReturn(Optional.of(userEntity));
 
@@ -78,10 +78,10 @@ public class ChannelControllerTest {
     void testSaveChannel(){
         // arrange
         ChannelDto channelDto = new ChannelDto();
-        doNothing().when(channelService).createChannel(channelDto);
+        doNothing().when(channelService).createChannel(channelDto,1l);
 
         // act
-        ResponseEntity<ChannelDto> responseEntity = channelController.saveChannel(channelDto);
+        ResponseEntity<ChannelDto> responseEntity = channelController.saveChannel(channelDto, 1L);
 
         // assert
         assertNotNull(responseEntity);

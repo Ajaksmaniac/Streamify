@@ -9,9 +9,9 @@ public interface ChannelService {
 
     ChannelDto getChannelById(Long channelId);
     List<ChannelDto> getChannelByUserId(Long userId);
-    ChannelDto createChannel(ChannelDto channelDto);
-    ChannelDto updateChannel(ChannelDto channelDto);
-    void deleteById(Long id);
+    ChannelDto createChannel(ChannelDto channelDto,Long authenticatedUserId);
+    ChannelDto updateChannel(ChannelDto channelDto,Long authenticatedUserId);
+    void deleteById(Long id,Long authenticatedUserId);
     List<ChannelDto> getAllChannels();
     List<ChannelDto> search(String keywords);
 

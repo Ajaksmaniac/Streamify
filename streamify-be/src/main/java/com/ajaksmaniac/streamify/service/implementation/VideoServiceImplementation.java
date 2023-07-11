@@ -6,6 +6,7 @@ import com.ajaksmaniac.streamify.entity.UserEntity;
 import com.ajaksmaniac.streamify.entity.VideoDetailsEntity;
 import com.ajaksmaniac.streamify.exception.channel.ChannelNotFoundException;
 import com.ajaksmaniac.streamify.exception.user.UserNotContentCreatorException;
+import com.ajaksmaniac.streamify.exception.user.UserNotExistentException;
 import com.ajaksmaniac.streamify.exception.video.VideoAlreadyExistsException;
 import com.ajaksmaniac.streamify.exception.video.VideoNotFoundException;
 import com.ajaksmaniac.streamify.exception.video.UserNotPermittedToDeleteVideoException;
@@ -13,6 +14,7 @@ import com.ajaksmaniac.streamify.exception.video.UserNotPermittedToUpdateVideoEx
 import com.ajaksmaniac.streamify.exception.video.UserNotPermittedToUploadVideoException;
 import com.ajaksmaniac.streamify.mapper.VideoDetailsMapper;
 import com.ajaksmaniac.streamify.repository.ChannelRepository;
+import com.ajaksmaniac.streamify.repository.UserRepository;
 import com.ajaksmaniac.streamify.repository.VideoRepository;
 import com.ajaksmaniac.streamify.service.VideoService;
 import com.ajaksmaniac.streamify.util.VideoUtilService;
@@ -39,6 +41,9 @@ public class VideoServiceImplementation implements VideoService {
 
     @Autowired
     private VideoRepository videoRepository;
+
+    @Autowired
+    private UserRepository userRepository;
     @Autowired
     private ChannelRepository channelRepository;
 
@@ -78,16 +83,16 @@ public class VideoServiceImplementation implements VideoService {
     }
 
     @Override
-    public VideoDetailsDto saveVideo(MultipartFile file, String name, Long channelId, String description) throws IOException {
+    public VideoDetailsDto saveVideo(MultipartFile file, String name, Long channelId, String description,Long authenticatedUserId) throws IOException {
         if (!channelRepository.existsById(channelId)) {
             throw new ChannelNotFoundException(channelId);
         }
 
-        if (!userUtil.isUserAdmin(sessionUser())) {
-            if (!userUtil.isUserContentCreator(sessionUser()))
-                throw new UserNotContentCreatorException(sessionUser().getId());
+        if (!userUtil.isUserAdmin(sessionUser(authenticatedUserId))) {
+            if (!userUtil.isUserContentCreator(sessionUser(authenticatedUserId)))
+                throw new UserNotContentCreatorException(sessionUser(authenticatedUserId).getId());
 
-            if (!channelRepository.isChannelOwnedByUser(channelId,sessionUser())) throw new UserNotPermittedToUploadVideoException(sessionUser().getId());
+            if (!channelRepository.isChannelOwnedByUser(channelId,sessionUser(authenticatedUserId))) throw new UserNotPermittedToUploadVideoException(sessionUser(authenticatedUserId).getId());
         }
 
         if (videoRepository.existsByName(name)) {
@@ -106,16 +111,17 @@ public class VideoServiceImplementation implements VideoService {
     }
 
     @Override
-    public void deleteVideo(Long id) throws IOException {
+    public void deleteVideo(Long id,Long authenticatedUserId) throws IOException {
+
         if (!videoRepository.existsById(id)) {
             throw new VideoNotFoundException(id);
         }
 
-        if (!userUtil.isUserAdmin(sessionUser())) {
-            if (!userUtil.isUserContentCreator(sessionUser()))
-                throw new UserNotContentCreatorException(sessionUser().getId());
+        if (!userUtil.isUserAdmin(sessionUser(authenticatedUserId))) {
+            if (!userUtil.isUserContentCreator(sessionUser(authenticatedUserId)))
+                throw new UserNotContentCreatorException(sessionUser(authenticatedUserId).getId());
 
-            if (!videoRepository.isVideoOwnedByUser(id,sessionUser().getId())) throw new UserNotPermittedToDeleteVideoException(sessionUser().getId());
+            if (!videoRepository.isVideoOwnedByUser(id,sessionUser(authenticatedUserId).getId())) throw new UserNotPermittedToDeleteVideoException(sessionUser(authenticatedUserId).getId());
         }
 
         new VideoUtilService().deleteFile(id.toString());
@@ -125,16 +131,16 @@ public class VideoServiceImplementation implements VideoService {
     }
 
     @Override
-    public VideoDetailsDto updateVideo(Long id, String name, String description, MultipartFile file) throws IOException {
+    public VideoDetailsDto updateVideo(Long id, String name, String description, MultipartFile file, Long authenticatedUserId) throws IOException {
         Optional<VideoDetailsEntity> entity = videoRepository.findById(id);
         if (entity.isEmpty()) {
             throw new VideoNotFoundException(id);
         }
 
-        if (!userUtil.isUserAdmin(sessionUser())) {
-            if (!userUtil.isUserContentCreator(sessionUser()))
-                throw new UserNotContentCreatorException(sessionUser().getId());
-            if (!videoRepository.isVideoOwnedByUser(id,sessionUser().getId())) throw new UserNotPermittedToUpdateVideoException(sessionUser().getId());
+        if (!userUtil.isUserAdmin(sessionUser(authenticatedUserId))) {
+            if (!userUtil.isUserContentCreator(sessionUser(authenticatedUserId)))
+                throw new UserNotContentCreatorException(sessionUser(authenticatedUserId).getId());
+            if (!videoRepository.isVideoOwnedByUser(id,sessionUser(authenticatedUserId).getId())) throw new UserNotPermittedToUpdateVideoException(sessionUser(authenticatedUserId).getId());
         }
 
 
@@ -179,7 +185,9 @@ public class VideoServiceImplementation implements VideoService {
         return mapper.convertListToDTO(videoRepository.getVideosForChannel(id));
     }
 
-    private UserEntity sessionUser() {
-        return (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    private UserEntity sessionUser(Long userId) {
+        Optional< UserEntity > user = Optional.ofNullable(userRepository.findById(userId).orElseThrow(() ->
+                new UserNotExistentException(String.valueOf(userId))));
+        return user.get();
     }
 }

@@ -6,9 +6,11 @@ import com.ajaksmaniac.streamify.entity.UserEntity;
 import com.ajaksmaniac.streamify.entity.VideoDetailsEntity;
 import com.ajaksmaniac.streamify.exception.comment.CommentNotFoundException;
 import com.ajaksmaniac.streamify.exception.comment.UserNotPermittedToDeleteOthersCommentsException;
+import com.ajaksmaniac.streamify.exception.user.UserNotExistentException;
 import com.ajaksmaniac.streamify.exception.video.VideoNotFoundException;
 import com.ajaksmaniac.streamify.mapper.CommentMapper;
 import com.ajaksmaniac.streamify.repository.CommentRepository;
+import com.ajaksmaniac.streamify.repository.UserRepository;
 import com.ajaksmaniac.streamify.repository.VideoRepository;
 import com.ajaksmaniac.streamify.service.CommentService;
 import com.ajaksmaniac.streamify.util.UserUtil;
@@ -31,7 +33,8 @@ public class CommentServiceImplementation implements CommentService {
 
     @Autowired
     private CommentRepository commentRepository;
-
+    @Autowired
+    private UserRepository userRepository;
     @Autowired
     private VideoRepository videoRepository;
 
@@ -51,7 +54,7 @@ public class CommentServiceImplementation implements CommentService {
     }
 
     @Override
-    public CommentDto saveComment(CommentDto comment) {
+    public CommentDto saveComment(CommentDto comment,Long authenticatedUserId) {
         if (!videoRepository.existsById((comment.getVideoId()))) {
             throw new VideoNotFoundException(comment.getVideoId());
         }
@@ -63,7 +66,7 @@ public class CommentServiceImplementation implements CommentService {
         entity.setCommentedAt(java.sql.Date.valueOf(date));
 
 
-        entity.setUser(sessionUser());
+        entity.setUser(sessionUser(authenticatedUserId));
         entity.setVideoDetails(new VideoDetailsEntity(comment.getVideoId()));
 
         return mapper.convertToDto(commentRepository.save(entity));
@@ -80,19 +83,19 @@ public class CommentServiceImplementation implements CommentService {
 
 
     @Override
-    public void deleteById(Long id) {
+    public void deleteById(Long id,Long authenticatedUserId) {
         Optional<CommentEntity> en = commentRepository.findByCommentId(id);
 
         if (en.isEmpty()) {
             throw new CommentNotFoundException(id);
         }
-        if (!userUtil.isUserAdmin(sessionUser())) {
+        if (!userUtil.isUserAdmin(sessionUser(authenticatedUserId))) {
 
             // Is user owner of the comment
-            if(!en.get().getUser().getId().equals(sessionUser().getId())){
+            if(!en.get().getUser().getId().equals(sessionUser(authenticatedUserId).getId())){
                 //is User owner of the video
-                if (!videoRepository.isVideoOwnedByUser(en.get().getVideoDetails().getId(), sessionUser().getId())) {
-                    throw new UserNotPermittedToDeleteOthersCommentsException(sessionUser().getId());
+                if (!videoRepository.isVideoOwnedByUser(en.get().getVideoDetails().getId(), sessionUser(authenticatedUserId).getId())) {
+                    throw new UserNotPermittedToDeleteOthersCommentsException(sessionUser(authenticatedUserId).getId());
 
                 }
             }
@@ -102,7 +105,9 @@ public class CommentServiceImplementation implements CommentService {
         commentRepository.deleteById(id);
     }
 
-    private UserEntity sessionUser() {
-        return (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    private UserEntity sessionUser(Long userId) {
+        Optional< UserEntity > user = Optional.ofNullable(userRepository.findById(userId).orElseThrow(() ->
+                new UserNotExistentException(String.valueOf(userId))));
+        return user.get();
     }
 }
