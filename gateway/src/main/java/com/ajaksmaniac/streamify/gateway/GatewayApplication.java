@@ -80,7 +80,7 @@ public class GatewayApplication {
 						.and()
 						.method(HttpMethod.GET)
 						.filters(f -> f.rewritePath("/video/id/(?<segment>.*)", "/video/id/${segment}"))
-						.uri("http://localhost:8081"))
+						.uri("lb://STREAMIFY-VIDEO-SERVICE"))
 //				.route("GET_VIDEO_DETAILS_LIST_BY_CHANNEL_ID", r -> r.path("/video/channel/id/**")
 //						.filters(f -> f.rewritePath("/video/channel/id/(?<segment>.*)", "/video/channel/id/${segment}"))
 //						.uri("http://localhost:8081"))
