@@ -1,12 +1,10 @@
-package com.ajaksmaniac.identityservice.entity;
+package com.ajaksmaniac.streamify.notifications.entity;
 
-import jakarta.persistence.*;
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
-import org.hibernate.annotations.Fetch;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import jakarta.persistence.*;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -31,9 +29,6 @@ public class UserEntity implements UserDetails {
     @Column(name = "isActive", nullable = false )
     private boolean isActive;
 
-    @OneToOne()
-    @JoinColumn(name = "role_id", nullable = false)
-    private RoleEntity role;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
@@ -42,7 +37,6 @@ public class UserEntity implements UserDetails {
             inverseJoinColumns = @JoinColumn(name = "channel_id")
     )
     private List<ChannelEntity> subscribedChannels;
-
 
 
     public String getIdString() {
@@ -77,6 +71,15 @@ public class UserEntity implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    public void subscribe(ChannelEntity channel){
+        this.subscribedChannels.add(channel);
+
+    }
+    public void unsubscribe(ChannelEntity channel){
+        this.subscribedChannels.remove(channel);
+
     }
 
 }

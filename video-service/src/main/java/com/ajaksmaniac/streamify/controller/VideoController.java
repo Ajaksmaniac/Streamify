@@ -44,17 +44,17 @@ public class VideoController {
 
 
     @PostMapping()
-    public ResponseEntity<VideoDetailsDto> saveVideo(@RequestParam("file") MultipartFile file, @RequestParam("name") String name, @RequestParam("channelId") Long channelId,  @RequestParam("description") String description,@HeaderParam("X-auth-user-id") Long authenticatedUser) throws IOException {
+    public ResponseEntity<VideoDetailsDto> saveVideo(@RequestParam("file") MultipartFile file, @RequestParam("name") String name, @RequestParam("channelId") Long channelId,  @RequestParam("description") String description,@RequestHeader("x-auth-user-id") Long authenticatedUser) throws IOException {
 
-
+//log.info("USER IIIIIIDDDDDD: " + authenticatedUser);
         VideoDetailsDto videoDetailsDto = videoService.saveVideo(file, name, channelId,description,authenticatedUser);
         ChannelDto channel =  channelService.getChannelById(channelId);
-        kafkaProducerService.sendMessage("/notification",String.format("%s uploaded a new video: %s", channel.getChannelName(), videoDetailsDto.getName()));
+        kafkaProducerService.sendMessage("subscribe-notification",String.format("%s;%s;%s uploaded a new video: %s", channel.getId(),videoDetailsDto.getId(),channel.getChannelName(), videoDetailsDto.getName()));
         return ResponseEntity.ok(videoDetailsDto);
     }
 
     @PutMapping("/id/{id}")
-    public ResponseEntity<VideoDetailsDto> update(@PathVariable("id") Long id,@RequestParam("name") String name,  @RequestParam("description") String description,@RequestParam(value = "file",required = false) MultipartFile file,@HeaderParam("X-auth-user-id") Long authenticatedUser) throws IOException {
+    public ResponseEntity<VideoDetailsDto> update(@PathVariable("id") Long id,@RequestParam("name") String name,  @RequestParam("description") String description,@RequestParam(value = "file",required = false) MultipartFile file,@RequestHeader("x-auth-user-id") Long authenticatedUser) throws IOException {
 
 
         return ResponseEntity.ok( videoService.updateVideo(id, name,description,file,authenticatedUser));

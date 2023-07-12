@@ -34,6 +34,11 @@ public class UserEntity implements UserDetails {
     private RoleEntity role;
 
     @ManyToMany
+    @JoinTable(
+            name = "user_subscribed_channels",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "channel_id")
+    )
     private List<ChannelEntity> subscribedChannels;
 
 

@@ -1,13 +1,10 @@
-package com.ajaksmaniac.streamify.entity;
+package com.ajaksmaniac.streamify.notifications.entity;
 
-
-import com.ajaksmaniac.streamify.dto.ChannelDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
+
 
 import java.util.List;
 
@@ -32,9 +29,6 @@ public class ChannelEntity{
 
     @ManyToMany(mappedBy = "subscribedChannels", fetch = FetchType.EAGER)
     private List<UserEntity> subscribers;
-
-    @OneToMany(cascade = CascadeType.ALL,mappedBy = "channel", orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<VideoDetailsEntity> videos;
 
     public ChannelEntity(Long id){
         this.id = id;

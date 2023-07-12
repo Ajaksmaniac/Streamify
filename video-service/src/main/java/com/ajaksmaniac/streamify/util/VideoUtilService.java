@@ -45,7 +45,7 @@ public class VideoUtilService {
     }
 
     public static void deleteFile(String id) throws IOException {
-        Path dirPath = Paths.get("Files-upload");
+        Path dirPath = Paths.get("Files-Upload");
         Files.list(dirPath).forEach(f ->{
             if(f.getFileName().toString().startsWith(id+"-")){
 

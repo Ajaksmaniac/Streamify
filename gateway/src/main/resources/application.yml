@@ -7,7 +7,7 @@ spring:
       globalcors:
         corsConfigurations:
           '[/**]':
-            allowedOrigins: "http://localhost:3000"
+            allowedOrigins: "*"
             allowedHeaders: "*"
             allowedMethods:
               - GET
@@ -15,6 +15,7 @@ spring:
               - DELETE
               - PUT
               - OPTIONS
+              - HEAD
       routes:
         - id: streamify-video-service
           uri: lb://STREAMIFY-VIDEO-SERVICE
@@ -29,3 +30,15 @@ spring:
           uri: lb://STREAMIFY-IDENTITY-SERVICE
           predicates:
             - Path=/auth/**, /user/**
+
+        - id: streamify-notification-service
+          uri: lb://STREAMIFY-NOTIFICATION-SERVICE
+          predicates:
+            - Path=/notifications/**, /notification/**,
+          filters:
+            - name: AuthenticationFilter
+              args:
+                methods: POST, OPTIONS, DELETE, PUT
+        
+    websocket:
+          enabled: true
