@@ -1,6 +1,7 @@
 import axios from "axios"
 
 export const getAllVideos = ()=>{
+  console.log(`${process.env.REACT_APP_BE_SERVER}${process.env.REACT_APP_GET_ALL_VIDEOS_ENDPOINT}`)
     return axios.get(`${process.env.REACT_APP_BE_SERVER}${process.env.REACT_APP_GET_ALL_VIDEOS_ENDPOINT}`)
 }
 

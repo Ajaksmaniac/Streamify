@@ -1,6 +1,6 @@
 export type NavbarProps = {
     logged:boolean,
-    isAdmin:boolean
+    isAdmin:boolean,
 }
 
 export type VideoBoxProps = {
@@ -46,3 +46,17 @@ export type Role = {
     id:number,
     name:string
 }
+
+export type Notification = {
+    id: number;
+    content: string,
+    created_at: Date
+    url: string
+}
+
+
+export type LiveNotification = {
+    notification: Notification,
+    show: boolean
+}
+

@@ -71,7 +71,7 @@ const VideoPage = () => {
         return false
       }
 
-      const src = `http://localhost:8082${video.url}`;
+      const src = `${process.env.REACT_APP_BE_SERVER}${video.url}`;
     // console.log(video)
     return (
         <Container className="mt-2">

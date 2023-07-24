@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 // import { match } from 'react-router-dom';
 import { BrowserRouter, Routes, Route}  from 'react-router-dom';
 import Footer from './components/Footer';
@@ -11,37 +11,15 @@ import RegisterPage from './views/RegisterPage';
 import LoginPage from './views/LoginPage';
 import CreateChannelPage from './views/CreateChannelPage';
 import NotFoundPage from './views/NotFoundPage';
-import { useAuth } from './hooks/useAuth';
-// import { io } from 'socket.io-client';
 
 function App() {
-  // const auth = useAuth()
-  // window.WebSocket = window.WebSocket || (window as any).MozWebSocket!;
-  // useEffect(()=>{
-  //   if(auth.user()){
-  //     const socket = new WebSocket(`ws://localhost:8080/notifications?userId=${auth.user()?.id}`);
   
-  //       socket.onopen = () => {
-  //         console.log('WebSocket connection established!');
-  //       };
-  
-  //       socket.onmessage = (event) => {
-  //         const receivedMessage = event.data;
-  //         console.log('Received message:', receivedMessage);
-  //       };
-  
-  //       socket.onclose = () => {
-  //         console.log('WebSocket connection closed!');
-  //       };
-  //    }
-
-  // },[])
 
   return (
       <>
       
           <BrowserRouter>
-          <NavigationBar logged={false} isAdmin={false}/>
+          <NavigationBar logged={false} isAdmin={false} />
 
             <Routes>
               <Route path="/" element={<HomePage />} />
