@@ -28,7 +28,7 @@ const Login = () => {
     
     return (
         <Container className='mt-5 w-25'>
-            <h1>Login</h1>
+            <h1>Sign In</h1>
              <Form>
                 {!errorHidden && (
                     <Form.Group>

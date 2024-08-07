@@ -44,6 +44,7 @@ public class VideoServiceImplementation implements VideoService {
 
     @Autowired
     private UserRepository userRepository;
+
     @Autowired
     private ChannelRepository channelRepository;
 

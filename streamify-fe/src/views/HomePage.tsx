@@ -9,6 +9,7 @@ export function HomePage () {
   useEffect(()=>{
     if(videos.length < 1){
       getAllVideos().then(res =>{
+        console.log(res.data)
         setVideos(res.data);
       })
     }

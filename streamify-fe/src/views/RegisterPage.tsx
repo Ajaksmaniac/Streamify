@@ -57,7 +57,7 @@ const RegisterPage = () => {
 
             <Form.Group className="mb-3" controlId="formBasicPassword">
                 <Form.Label>Password</Form.Label>
-                <Form.Control type="password" placeholder="Password" name="password" value={password} onChange={(e)=>handleChange(e)} required/>
+                <Form.Control type="password" placeholder="Password" name="password" data-testId="pass" value={password} onChange={(e)=>handleChange(e)} required/>
                 <Form.Text className="text-muted">
                 We'll never share your password with anyone else.
                 </Form.Text>
@@ -65,7 +65,7 @@ const RegisterPage = () => {
 
             <Form.Group className="mb-3" controlId="formBasicConfirmPassword">
                 <Form.Label>Confirm Password</Form.Label>
-                <Form.Control type="password" placeholder="Password" name="confirmPassword" value={confirmPassword} onChange={(e)=>handleChange(e)} required/>
+                <Form.Control type="password" placeholder="Password" name="confirmPassword" data-testId="confirmPass" value={confirmPassword} onChange={(e)=>handleChange(e)} required/>
                 
             </Form.Group>
 

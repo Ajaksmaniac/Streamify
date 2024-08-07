@@ -29,6 +29,7 @@ const VideoPage = () => {
 
     useEffect(()=>{
         getVideoDetailsById(videoDetailsId).then(res=>{
+            console.log(res.data)
             setVideo(res.data)
         })
       },[])
