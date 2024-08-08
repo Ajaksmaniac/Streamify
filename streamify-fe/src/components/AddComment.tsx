@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Alert, Button, Col, Container, Form, Row } from "react-bootstrap";
 import { useAuth } from "../hooks/useAuth";
 import { addCommentForVideo } from "../util/commentUtil";
@@ -45,11 +45,12 @@ const AddComment = (props: {videoId:number, callback: ()=>void}) => {
             value={commentContent}
             onChange={(e) => handleChange(e)}
             required
+            data-test-id={"commentField"}
           />
         </Form.Group>
             </Col>
             <Col>
-            <Button variant="primary" type="submit" className="d-inline">
+            <Button variant="primary" type="submit" className="d-inline"   data-test-id={"commentButton"}>
           Add Comment
         </Button>
             </Col>

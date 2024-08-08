@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Button, Container, Form } from 'react-bootstrap';
 import { loginWithUsernameAndPassword } from '../util/authUtil';
 import { useAuth } from '../hooks/useAuth';
@@ -57,7 +57,7 @@ const Login = () => {
            
             
 
-            <Button variant="primary" type="submit" onClick={(e) => submit(e)}>
+            <Button variant="primary" type="submit" onClick={(e) => submit(e)} data-test-id="submit-button">
                 Login
             </Button>
         </Form>

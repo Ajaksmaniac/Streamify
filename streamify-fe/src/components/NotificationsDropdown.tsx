@@ -1,4 +1,3 @@
-import React from 'react';
 import { DropdownButton, ButtonGroup, Dropdown, NavDropdown } from 'react-bootstrap';
 import { Channel } from '../constants/types';
 import { useNavigate } from 'react-router-dom';

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import  { useState } from "react";
 import { Alert, Button, Col, Row } from "react-bootstrap";
 
 const CommentDeletedAlert = (props: { show: boolean; content: string }) => {

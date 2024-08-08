@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, createContext } from "react";
+import { useState, useEffect, useContext, createContext } from "react";
 import { loginWithUsernameAndPassword } from "../util/authUtil";
 import { User } from "../constants/types";
 import { getUserById } from "../util/userUtil";

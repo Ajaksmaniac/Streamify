@@ -154,7 +154,7 @@ export default function NavigationBar(props: NavbarProps) {
 
         <Form action="/search" className="mx-auto">
           <Row>
-            <Form.Group as={Col}>
+            <Form.Group as={Col} controlId="formSearch">
               <FormControl
                 type="text"
                 placeholder="Search Video"
@@ -162,6 +162,7 @@ export default function NavigationBar(props: NavbarProps) {
                 value={keywords}
                 onChange={(e) => handleChange(e)}
                 style={{ width: "500px" }}
+                data-test-id={"searchField"}
               />
             </Form.Group>
             <Form.Group as={Col}>
@@ -182,10 +183,11 @@ export default function NavigationBar(props: NavbarProps) {
                 name="channels"
                 onChange={(e) => handleChange(e)}
                 checked={searchChannels}
+                data-test-id={"searchCheckBox"}
               />
             </Form.Group>
             <Form.Group as={Col}>
-              <Button variant="outline-info" type="submit" disabled={disabled}>
+              <Button variant="outline-info" type="submit" disabled={disabled} data-test-id={"searchButton"}>
                 Search
               </Button>
             </Form.Group>

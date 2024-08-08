@@ -12,8 +12,8 @@ export default function ChannelBox(props:{channel:Channel} ) {
     <Col xs={6} md={4} lg={2} className="mb-4"
     onClick={() => navigate(`/channel/${props.channel.id}`, { state: { channel: props.channel } })}
     >
-       <Card className="h-100 w-100">
-        <Card.Body>
+       <Card className="h-100 w-100" data-test-id={"channelBox"}>
+        <Card.Body data-test-id={"channelBox"}>
           <h4>{props.channel.channelName}</h4>
           <p>Owner:{props.channel.username}</p>
         </Card.Body> 

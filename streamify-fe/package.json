@@ -34,6 +34,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --coverage",
+    "test-integration": "testcafe chrome src/TestCafe/ContentTest.js",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
@@ -55,6 +56,8 @@
     ]
   },
   "devDependencies": {
-    "axios": "^0.27.2"
+    "axios": "^0.27.2",
+    "nock": "^13.5.4",
+    "testcafe": "^3.6.2"
   }
 }

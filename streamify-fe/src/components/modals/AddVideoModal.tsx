@@ -1,4 +1,4 @@
-import React, { FormEvent, useState } from 'react';
+import { FormEvent, useState } from 'react';
 import { Button, Form, Modal } from 'react-bootstrap';
 import { uploadVideo } from '../../util/videoUtil';
 import { STATUS_CODES } from 'http';
@@ -40,7 +40,7 @@ const AddVideoModal = (props:{channelId:number, accessToken:string}) => {
     const handleShow = () => setShow(true);
     return (
         <>
-        <Button variant="primary" onClick={handleShow}>
+        <Button variant="primary" onClick={handleShow} data-test-id={"addNewVideoButton"}>
         Add new Video
       </Button>
         <Modal
@@ -84,7 +84,7 @@ const AddVideoModal = (props:{channelId:number, accessToken:string}) => {
           <Button variant="secondary" onClick={handleClose}>
             Close
           </Button>
-          <Button variant="primary" type="submit">Add Video</Button>
+          <Button variant="primary" type="submit" data-test-id={"uploadVideoButton"}>Add Video</Button>
         </Modal.Footer>
         </Form>
         </Modal>

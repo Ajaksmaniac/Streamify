@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Alert, Button, Col, Row } from "react-bootstrap";
 
 const CommentPostedAlert = (props: { show: boolean; content: string }) => {

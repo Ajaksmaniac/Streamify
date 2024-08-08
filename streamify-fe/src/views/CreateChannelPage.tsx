@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button, Container, Form } from 'react-bootstrap';
 import { useAuth } from '../hooks/useAuth';
 import { createChannel } from '../util/channelUtil';

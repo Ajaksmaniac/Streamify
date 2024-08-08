@@ -1,4 +1,3 @@
-import React from 'react';
 import { Toast, ToastContainer } from 'react-bootstrap';
 import { LiveNotification, Notification } from '../constants/types';
 import { useAuth } from '../hooks/useAuth';

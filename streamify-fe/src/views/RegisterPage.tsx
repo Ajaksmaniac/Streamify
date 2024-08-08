@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Button, Container, Form } from 'react-bootstrap';
 import { registerWithUsernameAndPassword } from '../util/authUtil';
 import { useAuth } from '../hooks/useAuth';
@@ -80,7 +80,7 @@ const RegisterPage = () => {
                         <Form.Label className='text-danger'>Fill out all the fields.</Form.Label>
                     </Form.Group>)
             }
-            <Button variant="primary" type="submit"
+            <Button variant="primary" type="submit"  data-test-id="submit-button"
             onClick={(e) => submit(e)}>
                 Register
             </Button>

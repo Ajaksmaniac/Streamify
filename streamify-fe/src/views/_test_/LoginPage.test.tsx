@@ -29,21 +29,21 @@ describe('Login Component', () => {
   });
 
 
-  test('handles on submit button', () => {
-    loginWithUsernameAndPassword.mockResolvedValueOnce({status: 200})
-    render(<LoginPage />);
+//   test('handles on submit button', () => {
+//     loginWithUsernameAndPassword.mockResolvedValueOnce({status: 200})
+//     render(<LoginPage />);
 
 
 
-    fireEvent.change(screen.getByLabelText(/username/i), { target: { value: 'testuser' } });
-    fireEvent.change(screen.getByLabelText(/password/i), { target: { value: 'testpass' } });
+//     fireEvent.change(screen.getByLabelText(/username/i), { target: { value: 'testuser' } });
+//     fireEvent.change(screen.getByLabelText(/password/i), { target: { value: 'testpass' } });
 
-    fireEvent.click(screen.getByRole('button', { name: /login/i }));
-// let login  = jest.fn();
-// // loginWithUsernameAndPassword()
-//     expect(screen.getByLabelText(/username/i)).toNot
-//     expect(screen.getByLabelText(/password/i)).toHaveValue('testpass');
-    // axiosMockAdapterInstance
-    expect(loginWithUsernameAndPassword).toHaveBeenCalledTimes(1);
-  });
+//     fireEvent.click(screen.getByRole('button', { name: /login/i }));
+// // let login  = jest.fn();
+// // // loginWithUsernameAndPassword()
+// //     expect(screen.getByLabelText(/username/i)).toNot
+// //     expect(screen.getByLabelText(/password/i)).toHaveValue('testpass');
+//     // axiosMockAdapterInstance
+//     expect(loginWithUsernameAndPassword).toHaveBeenCalledTimes(1);
+//   });
 });

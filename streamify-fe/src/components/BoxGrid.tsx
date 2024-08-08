@@ -1,4 +1,3 @@
-import React from "react";
 import { Row } from "react-bootstrap";
 import VideoBox from "./VideoBox";
 import { Video, Channel } from "../constants/types";
