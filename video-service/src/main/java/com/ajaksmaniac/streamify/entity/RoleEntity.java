@@ -15,7 +15,7 @@ import lombok.RequiredArgsConstructor;
 public class RoleEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.TABLE)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "role_id")
     private Long id;
 

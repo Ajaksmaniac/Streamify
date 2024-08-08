@@ -2,11 +2,9 @@ package com.ajaksmaniac.streamify.controller;
 
 
 import com.ajaksmaniac.streamify.dto.ChannelDto;
-import com.ajaksmaniac.streamify.dto.VideoDetailsDto;
-import com.ajaksmaniac.streamify.service.ChannelService;
+import com.ajaksmaniac.streamify.service.implementation.ChannelService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,8 +18,7 @@ import java.util.List;
 public class ChannelController {
 
     @Autowired
-    @Qualifier(value = "channelServiceImplementation")
-    ChannelService channelService;
+    private ChannelService channelService;
 
     @GetMapping("/id/{id}")
     public ResponseEntity<ChannelDto> getChannelDetailsById(@PathVariable("id") Long id) {

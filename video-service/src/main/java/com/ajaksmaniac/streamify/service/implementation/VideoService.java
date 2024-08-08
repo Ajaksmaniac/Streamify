@@ -16,7 +16,6 @@ import com.ajaksmaniac.streamify.mapper.VideoDetailsMapper;
 import com.ajaksmaniac.streamify.repository.ChannelRepository;
 import com.ajaksmaniac.streamify.repository.UserRepository;
 import com.ajaksmaniac.streamify.repository.VideoRepository;
-import com.ajaksmaniac.streamify.service.VideoService;
 import com.ajaksmaniac.streamify.util.VideoUtilService;
 import com.ajaksmaniac.streamify.util.UserUtil;
 import lombok.AllArgsConstructor;
@@ -24,7 +23,6 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -32,12 +30,11 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 @Service
 @AllArgsConstructor
 @Slf4j
-public class VideoServiceImplementation implements VideoService {
+public class VideoService {
 
     @Autowired
     private VideoRepository videoRepository;
@@ -54,8 +51,6 @@ public class VideoServiceImplementation implements VideoService {
     @Autowired
     UserUtil userUtil;
 
-
-    @Override
     public Resource getVideo(Long id) throws IOException {
 
         if (!videoRepository.existsById(id)) {
@@ -65,7 +60,6 @@ public class VideoServiceImplementation implements VideoService {
 
     }
 
-    @Override
     public VideoDetailsDto getVideoDetails(Long id) {
 
         if (!videoRepository.existsById(id)) {
@@ -77,13 +71,11 @@ public class VideoServiceImplementation implements VideoService {
         return mapper.convertToDto(en);
     }
 
-    @Override
     public List<VideoDetailsDto> getAllVideosDetails() {
 
         return mapper.convertListToDTO(videoRepository.getAllVideos());
     }
 
-    @Override
     public VideoDetailsDto saveVideo(MultipartFile file, String name, Long channelId, String description,Long authenticatedUserId) throws IOException {
         if (!channelRepository.existsById(channelId)) {
             throw new ChannelNotFoundException(channelId);
@@ -111,7 +103,6 @@ public class VideoServiceImplementation implements VideoService {
         return mapper.convertToDto(saved);
     }
 
-    @Override
     public void deleteVideo(Long id,Long authenticatedUserId) throws IOException {
 
         if (!videoRepository.existsById(id)) {
@@ -131,7 +122,6 @@ public class VideoServiceImplementation implements VideoService {
 
     }
 
-    @Override
     public VideoDetailsDto updateVideo(Long id, String name, String description, MultipartFile file, Long authenticatedUserId) throws IOException {
         Optional<VideoDetailsEntity> entity = videoRepository.findById(id);
         if (entity.isEmpty()) {
@@ -165,7 +155,6 @@ public class VideoServiceImplementation implements VideoService {
         return mapper.convertToDto(entity.get());
     }
 
-    @Override
     public List<VideoDetailsDto> search(String keywords) {
 //        log.info(videoRepository.search(keywords).toString());
          Map videoMap = new HashMap<Long, VideoDetailsEntity>();
@@ -181,7 +170,6 @@ public class VideoServiceImplementation implements VideoService {
         return mapper.convertListToDTO(videoMap.values().stream().toList());
     }
 
-    @Override
     public List<VideoDetailsDto> getAllVideosByChannel(Long id) {
         return mapper.convertListToDTO(videoRepository.getVideosForChannel(id));
     }

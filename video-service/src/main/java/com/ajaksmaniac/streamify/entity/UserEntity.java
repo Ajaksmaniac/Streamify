@@ -11,12 +11,12 @@ import java.util.List;
 
 @Data
 @RequiredArgsConstructor
-@Table(name = "user")
+@Table(name = "\"user\"")
 @Entity
 public class UserEntity implements UserDetails {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.TABLE)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "user_id")
     private Long id;
 

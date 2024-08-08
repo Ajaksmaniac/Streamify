@@ -8,18 +8,16 @@ import com.ajaksmaniac.streamify.exception.user.*;
 import com.ajaksmaniac.streamify.mapper.ChannelMapper;
 import com.ajaksmaniac.streamify.repository.ChannelRepository;
 import com.ajaksmaniac.streamify.repository.UserRepository;
-import com.ajaksmaniac.streamify.service.ChannelService;
 import com.ajaksmaniac.streamify.util.UserUtil;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 
 @Service
 @AllArgsConstructor
-public class ChannelServiceImplementation implements ChannelService {
+public class ChannelService {
 
     @Autowired
     private ChannelRepository channelRepository;
@@ -34,7 +32,7 @@ public class ChannelServiceImplementation implements ChannelService {
     UserUtil userUtil;
 
 
-    @Override
+//    @Override
     public ChannelDto getChannelById(Long channelId) {
         Optional<ChannelEntity> en = channelRepository.getChannelById(channelId);
         if(en.isEmpty()){
@@ -44,7 +42,7 @@ public class ChannelServiceImplementation implements ChannelService {
         return channelMapper.convertToDto(en.get());
     }
 
-    @Override
+//    @Override
     public List<ChannelDto> getChannelByUserId(Long userId) {
         List<ChannelEntity> en = channelRepository.findByUserId(userId);
         if(en.isEmpty()){
@@ -54,7 +52,7 @@ public class ChannelServiceImplementation implements ChannelService {
         return channelMapper.convertListToDTO(en);
     }
 
-    @Override
+//    @Override
     public ChannelDto createChannel(ChannelDto channelDto,Long authenticatedUserId) {
 
         if(channelRepository.existsByChannelName(channelDto.getChannelName())){
@@ -79,7 +77,7 @@ public class ChannelServiceImplementation implements ChannelService {
 
     }
 
-    @Override
+//    @Override
     public ChannelDto updateChannel(ChannelDto channelDto,Long authenticatedUserId) {
         Optional<ChannelEntity> entity = channelRepository.findById(channelDto.getId());
 
@@ -111,7 +109,7 @@ public class ChannelServiceImplementation implements ChannelService {
         return channelMapper.convertToDto(channelRepository.save(entity.get()));
     }
 
-    @Override
+//    @Override
     public void deleteById(Long id,Long authenticatedUserId) {
 
         if(!channelRepository.existsById(id)) {
@@ -128,12 +126,12 @@ public class ChannelServiceImplementation implements ChannelService {
         channelRepository.deleteById(id);
     }
 
-    @Override
+//    @Override
     public List<ChannelDto> getAllChannels() {
         return channelMapper.convertListToDTO(channelRepository.findAll());
     }
 
-    @Override
+//    @Override
     public List<ChannelDto> search(String keywords) {
         Map channelMap = new HashMap<Long, ChannelEntity>();
         List<String> keywordsList = Arrays.stream(keywords.split(" ")).toList();
@@ -150,7 +148,7 @@ public class ChannelServiceImplementation implements ChannelService {
 
 
 
-    @Override
+//    @Override
     public void subscribeToChannel(Long userId, Long channelId){
         Optional< UserEntity > user = Optional.ofNullable(userRepository.findById(userId).orElseThrow(() ->
                 new UserNotExistentException(String.valueOf(userId))));
@@ -164,7 +162,7 @@ public class ChannelServiceImplementation implements ChannelService {
         userRepository.save(user.get());
     }
 
-    @Override
+//    @Override
     public void unsubscribeFromChannel(Long userId, Long channelId){
         Optional< UserEntity > user = Optional.ofNullable(userRepository.findById(userId).orElseThrow(() ->
                 new UserNotExistentException(String.valueOf(userId))));

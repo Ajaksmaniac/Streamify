@@ -3,9 +3,8 @@ package com.ajaksmaniac.streamify.controller;
 import com.ajaksmaniac.streamify.configuration.KafkaProducerService;
 import com.ajaksmaniac.streamify.dto.ChannelDto;
 import com.ajaksmaniac.streamify.dto.VideoDetailsDto;
-import com.ajaksmaniac.streamify.service.ChannelService;
-import com.ajaksmaniac.streamify.service.VideoService;
-import jakarta.ws.rs.HeaderParam;
+import com.ajaksmaniac.streamify.service.implementation.ChannelService;
+import com.ajaksmaniac.streamify.service.implementation.VideoService;
 import lombok.AllArgsConstructor;
 
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +20,6 @@ import org.springframework.core.io.Resource;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 
 
 @RestController
@@ -30,23 +28,18 @@ import java.util.Map;
 @CrossOrigin
 @Slf4j
 public class VideoController {
+
     @Autowired
-    @Qualifier(value = "videoServiceImplementation")
     private VideoService videoService;
 
     @Autowired
     KafkaProducerService kafkaProducerService;
 
     @Autowired
-    @Qualifier(value = "channelServiceImplementation")
     ChannelService channelService;
-
-
 
     @PostMapping()
     public ResponseEntity<VideoDetailsDto> saveVideo(@RequestParam("file") MultipartFile file, @RequestParam("name") String name, @RequestParam("channelId") Long channelId,  @RequestParam("description") String description,@RequestHeader("x-auth-user-id") Long authenticatedUser) throws IOException {
-
-//log.info("USER IIIIIIDDDDDD: " + authenticatedUser);
         VideoDetailsDto videoDetailsDto = videoService.saveVideo(file, name, channelId,description,authenticatedUser);
         ChannelDto channel =  channelService.getChannelById(channelId);
         kafkaProducerService.sendMessage("subscribe-notification",String.format("%s;%s;%s uploaded a new video: %s", channel.getId(),videoDetailsDto.getId(),channel.getChannelName(), videoDetailsDto.getName()));
